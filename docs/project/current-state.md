@@ -20,7 +20,7 @@ updated: 2026-09-27
 - `content/courses/uart-foundations.md` 已建立 6 单元课程骨架，当前保持 `review / unlisted`，尚未进入搜索或正式课程列表；
 - Knowledge 详情页会展示“建议先读”和“继续学习”，原 UART URL 已改写为从“什么是 UART”开始的入门页；
 - 项目专用 `teach` 技能已适配内容模型，并以仓库 `skills/teach/` 为权威版本；
-- GitHub Pages 工作流已经建立；本地类型检查和生产构建均通过；
+- GitHub Pages 工作流已经建立并成功部署；本地类型检查和生产构建均通过；
 - 已在真实浏览器验证桌面端、320px 移动端、主题切换和 UART 搜索；
 - 下一工作单元转向完成课程第一单元、练习反馈和 UART 信号互动。
 
@@ -42,4 +42,4 @@ updated: 2026-09-27
 
 ## 阻塞项
 
-无。用户已完成 GitHub Pages 发布源设置；本工作单元推送后需要确认首次成功部署。
+无。GitHub Pages 发布源已经启用，提交 `c4e34f3` 的构建与部署均已成功。

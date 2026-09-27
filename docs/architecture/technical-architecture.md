@@ -35,7 +35,7 @@ status: accepted
 - 根目录 `content/` 保持为不依赖 Web 框架的权威内容源，由站点 Content Collection 读取并校验；
 - 已实现设计令牌、浅深主题、响应式主导航、首页、路线、Knowledge、搜索、关于与 404 页面；
 - Pagefind 在生产构建后生成静态中文索引；
-- `.github/workflows/deploy.yml` 负责检查、构建并发布 GitHub Pages；仓库 Pages 发布源已由用户启用，等待本工作单元验证成功部署；
+- `.github/workflows/deploy.yml` 负责检查、构建并发布 GitHub Pages；仓库 Pages 发布源已启用并通过首次完整部署验证；
 - 当前尚未实现课程产物接入、浏览器学习状态、互动实验和专项内容校验脚本。
 
 ## 内容层
