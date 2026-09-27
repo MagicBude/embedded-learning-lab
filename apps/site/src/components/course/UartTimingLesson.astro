@@ -1,0 +1,49 @@
+<section class="lesson surface" aria-labelledby="uart-u02-title" data-uart-timing>
+  <header><p class="eyebrow">互动练习 · uart-u02-speed-and-sampling</p><h2 id="uart-u02-title">观察帧时间和累计采样漂移</h2><p>调整帧格式、波特率和接收端偏差。结果是理想教学模型，不是具体芯片的容差判定。</p></header>
+  <form class="controls" data-timing-form>
+    <div class="field"><label for="baud">发送端波特率</label><input id="baud" name="baud" type="number" min="300" max="4000000" step="100" value="115200" /></div>
+    <div class="field"><label for="data-bits">数据位</label><select id="data-bits" name="dataBits"><option value="8" selected>8 bit</option><option value="9">9 bit</option></select></div>
+    <div class="field"><label for="parity">校验</label><select id="parity" name="parity"><option value="0" selected>无校验</option><option value="1">偶校验</option><option value="1">奇校验</option></select></div>
+    <div class="field"><label for="stop-bits">停止位</label><select id="stop-bits" name="stopBits"><option value="1" selected>1 bit</option><option value="2">2 bit</option></select></div>
+    <div class="field mismatch"><label for="mismatch">接收端相对快慢：<output data-mismatch-label>+2.0%</output></label><input id="mismatch" name="mismatch" type="range" min="-6" max="6" step="0.1" value="2" /></div>
+  </form>
+  <dl class="metrics" aria-live="polite"><div><dt>单个位时间</dt><dd data-bit-time>8.681 μs</dd></div><div><dt>一帧总位数</dt><dd data-frame-bits>10 bit</dd></div><div><dt>一帧时间</dt><dd data-frame-time>86.806 μs</dd></div><div><dt>理论帧率上限</dt><dd data-frame-rate>11520 帧/s</dd></div></dl>
+  <div class="sampling-model"><div class="scale" aria-hidden="true"><span>前一位边界</span><span>发送端理想中心</span><span>后一位边界</span></div><div class="track" data-track><span class="ideal" title="发送端理想中心"></span><span class="receiver" data-receiver-marker title="接收端预测采样点"></span></div><p><strong>最后一个符号中心的理想累计偏移：</strong> <output data-drift></output></p><p class="feedback" data-risk role="status" aria-live="polite"></p></div>
+  <form class="prediction" data-speed-question><fieldset><legend>相同 8N1 帧，哪一个在线路上占用时间更短？</legend><label><input type="radio" name="speed" value="9600" required /> 9600 baud</label><label><input type="radio" name="speed" value="115200" /> 115200 baud</label><label><input type="radio" name="speed" value="same" /> 一样长</label></fieldset><button class="button" type="submit">检查答案</button><p data-speed-feedback role="status" aria-live="polite"></p></form>
+  <aside class="boundary"><strong>模型边界</strong><p>实际 STM32F103 还受到过采样、波特率分频量化、起始沿检测、两端时钟、线路边沿和噪声影响。请用参考手册与真实波形判断可靠性，不要把这里的颜色当成器件规格。</p></aside>
+</section>
+<script>
+  const timingRoot = document.querySelector<HTMLElement>('[data-uart-timing]');
+  if (timingRoot) {
+    const form = timingRoot.querySelector<HTMLFormElement>('[data-timing-form]')!;
+    const readNumber = (name: string) => Number(new FormData(form).get(name));
+    const formatTime = (seconds: number) => seconds >= 0.001 ? `${(seconds * 1000).toFixed(3)} ms` : `${(seconds * 1e6).toFixed(3)} μs`;
+    const update = () => {
+      const baud = Math.max(300, readNumber('baud') || 300);
+      const frameBits = 1 + readNumber('dataBits') + readNumber('parity') + readNumber('stopBits');
+      const mismatch = readNumber('mismatch');
+      const bitTime = 1 / baud;
+      const frameTime = frameBits * bitTime;
+      const driftBits = (frameBits - 0.5) * (1 / (1 + mismatch / 100) - 1);
+      timingRoot.querySelector<HTMLOutputElement>('[data-mismatch-label]')!.value = `${mismatch >= 0 ? '+' : ''}${mismatch.toFixed(1)}%`;
+      timingRoot.querySelector<HTMLElement>('[data-bit-time]')!.textContent = formatTime(bitTime);
+      timingRoot.querySelector<HTMLElement>('[data-frame-bits]')!.textContent = `${frameBits} bit`;
+      timingRoot.querySelector<HTMLElement>('[data-frame-time]')!.textContent = formatTime(frameTime);
+      timingRoot.querySelector<HTMLElement>('[data-frame-rate]')!.textContent = `${Math.floor(baud / frameBits).toLocaleString('zh-CN')} 帧/s`;
+      timingRoot.querySelector<HTMLOutputElement>('[data-drift]')!.value = `${driftBits >= 0 ? '+' : ''}${driftBits.toFixed(3)} bit`;
+      const marker = timingRoot.querySelector<HTMLElement>('[data-receiver-marker]')!;
+      marker.style.left = `${Math.max(0, Math.min(100, 50 + driftBits * 100))}%`;
+      const risk = timingRoot.querySelector<HTMLElement>('[data-risk]')!;
+      const magnitude = Math.abs(driftBits);
+      if (magnitude < 0.25) { risk.textContent = '理想模型中采样点仍靠近位中心，但这不等于真实硬件已经通过容差验证。'; risk.dataset.state = 'near'; }
+      else if (magnitude < 0.5) { risk.textContent = '理想模型中采样点已经接近位边界，留给量化、噪声和边沿误差的余量很小。'; risk.dataset.state = 'warn'; }
+      else { risk.textContent = '理想模型中的采样点已经越过当前位边界，接收错误风险很高。'; risk.dataset.state = 'danger'; }
+    };
+    form.addEventListener('input', update); form.addEventListener('change', update); update();
+    const question = timingRoot.querySelector<HTMLFormElement>('[data-speed-question]')!;
+    question.addEventListener('submit', (event) => { event.preventDefault(); const answer = new FormData(question).get('speed'); const output = timingRoot.querySelector<HTMLElement>('[data-speed-feedback]')!; output.textContent = answer === '115200' ? '正确。波特率更高意味着单个位时间更短；帧位数相同，所以整帧时间也更短。' : '再算一次：一帧时间 = 帧总位数 ÷ 波特率。帧位数相同时，分母越大，时间越短。'; output.dataset.state = answer === '115200' ? 'correct' : 'retry'; });
+  }
+</script>
+<style>
+  .lesson{max-width:60rem;margin:3rem 0;padding:clamp(1rem,3vw,2rem)}.lesson header h2{margin:.35rem 0}.lesson header p:last-child{color:var(--color-text-muted)}.controls{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-top:1.5rem}.field{display:grid;gap:.35rem}.field label,legend{font-weight:700}.field input,.field select{min-height:44px;width:100%;padding:.45rem .6rem;border:1px solid var(--color-border-strong);border-radius:var(--radius-md);background:var(--color-bg);color:var(--color-text)}.field.mismatch{grid-column:1/-1}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem}.metrics div{padding:.75rem;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-bg)}.metrics dt{color:var(--color-text-muted);font-size:.75rem}.metrics dd{margin:0;font:600 .95rem/1.6 var(--font-mono)}.sampling-model{margin-top:1.5rem;padding:1rem;border:1px solid var(--color-border);border-radius:var(--radius-md)}.scale{display:flex;justify-content:space-between;color:var(--color-text-muted);font-size:.75rem}.track{position:relative;height:4rem;margin:.5rem 0;border-inline:2px solid var(--color-border-strong);background:linear-gradient(90deg,var(--color-surface-subtle),var(--color-bg),var(--color-surface-subtle))}.ideal,.receiver{position:absolute;top:0;bottom:0;width:2px;transform:translateX(-1px)}.ideal{left:50%;background:var(--color-text-muted)}.receiver{left:50%;width:4px;transform:translateX(-2px);background:var(--color-primary);transition:left var(--motion-base) var(--ease-standard)}.receiver::before{content:'RX';position:absolute;top:.25rem;left:.35rem;color:var(--color-primary);font:700 .75rem/1 var(--font-mono)}.sampling-model p{margin:.5rem 0}.feedback[data-state='near']{color:var(--color-verified)}.feedback[data-state='warn']{color:var(--color-warning)}.feedback[data-state='danger']{color:var(--color-danger)}.prediction{display:grid;gap:1rem;margin-top:1.5rem}.prediction fieldset{display:flex;flex-wrap:wrap;gap:.75rem 1.25rem;margin:0;padding:1rem;border:1px solid var(--color-border);border-radius:var(--radius-md)}.prediction label{display:flex;gap:.4rem}.prediction .button{justify-self:start}.prediction [data-state='correct']{color:var(--color-verified)}.prediction [data-state='retry']{color:var(--color-warning)}.boundary{margin-top:2rem;padding:1rem;border-left:3px solid var(--color-warning);background:var(--color-surface-subtle)}.boundary p{margin:.25rem 0}@media(max-width:48rem){.controls,.metrics{grid-template-columns:repeat(2,1fr)}}@media(max-width:26rem){.controls,.metrics{grid-template-columns:1fr}}
+</style>

@@ -39,6 +39,16 @@ sources:
       - STM32F103 USART 的 TX 空闲状态为高电平
       - RX 使用过采样恢复数据并区分有效输入与噪声
       - 外设提供帧错误、噪声错误、过载错误和奇偶校验错误标志
+  - id: st-an6363-uart-clock
+    type: official
+    title: AN6363 — Introduction to clock requirements and calibration for STM32 MCUs
+    organization: STMicroelectronics
+    url: https://www.st.com/resource/en/application_note/an6363-introduction-to-clock-requirements-and-calibration-for-stm32-mcus-stmicroelectronics.pdf
+    locator: Section 2.1, UART
+    accessedAt: 2026-09-27
+    supports:
+      - 异步 UART 的时钟偏差会改变帧内采样位置并影响靠后的数据位
+      - 实际接收容差同时受帧长度、过采样、分频量化、线路和噪声影响
 ---
 
 ## 先回答：UART 是什么
@@ -78,6 +88,22 @@ STM32F103 USART 的 RX 使用过采样技术恢复数据。接收器会围绕预
 
 > **工程边界：** “能偶尔收到字符”不等于配置正确。波特率误差、线路电平、接地、噪声和两端帧参数都需要分别验证。
 
+## 波特率决定一帧需要多久
+
+波特率描述每秒传输多少个符号。对这里的二电平 UART，一个符号承载一个 bit，因此单个位时间为：
+
+```text
+位时间 = 1 / 波特率
+```
+
+一帧时间还要乘以整帧的位数。8N1 包含 1 个起始位、8 个数据位、没有校验位和 1 个停止位，一共 10 bit。在 115200 baud 下，理想帧时间约为 `10 / 115200 = 86.8 μs`。这不等于每秒传输 115200 byte；忽略帧间空隙时，8N1 的理论上限约为每秒 11520 帧单字节数据。
+
+## 为什么波特率误差会向帧尾积累
+
+发送端和接收端各自依赖本地时钟。接收端检测起始位后，按照自己的位时间预测后续采样位置；如果双方位时间略有不同，采样点会逐位偏离发送端的位中心。越靠近帧尾，累计偏移通常越明显。[^st-an6363-uart-clock]
+
+不能据此把某个固定百分比当作所有 UART 的安全容差。STM32 的实际余量还会受到帧长度、过采样方式、波特率分频量化、两端时钟误差、线路边沿与噪声影响，应按具体器件参考手册和测量结果判断。[^st-an6363-uart-clock]
+
 ## 可以观察哪些错误
 
 STM32F103 USART 为过载、噪声、帧和奇偶校验错误提供状态标志。调试时不要只读取数据寄存器；同时记录这些错误状态，通常能更快地区分“软件没有及时取走数据”和“线路或帧参数不匹配”。[^st-rm0008-usart]
@@ -92,3 +118,4 @@ STM32F103 USART 为过载、噪声、帧和奇偶校验错误提供状态标志�
 
 [^st-rm0008-usart]: STMicroelectronics, RM0008, Section 27, Universal synchronous asynchronous receiver transmitter.
 [^rfc20]: RFC 20, ASCII format for network interchange, character representation and code table.
+[^st-an6363-uart-clock]: STMicroelectronics, AN6363, Section 2.1, UART clock requirements.

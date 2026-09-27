@@ -45,6 +45,14 @@ sources:
     locator: HAL UART driver chapter
     accessedAt: 2026-09-27
     supports: [STM32F1 HAL UART 的轮询、中断和 DMA 接口]
+  - id: st-an6363-uart-clock
+    type: official
+    title: AN6363 — Introduction to clock requirements and calibration for STM32 MCUs
+    organization: STMicroelectronics
+    url: https://www.st.com/resource/en/application_note/an6363-introduction-to-clock-requirements-and-calibration-for-stm32-mcus-stmicroelectronics.pdf
+    locator: Section 2.1, UART
+    accessedAt: 2026-09-27
+    supports: [UART 时钟误差、采样位置漂移和真实容差影响因素]
 units:
   - id: uart-u01-byte-to-wire
     title: 从字符到线路
@@ -59,10 +67,13 @@ units:
   - id: uart-u02-speed-and-sampling
     title: 波特率、采样与误差
     objective: 能计算一帧传输时间，并判断时钟误差为什么会积累成采样风险。
-    status: planned
+    status: available
     knowledge: [knowledge-uart-frame-and-idle-v1]
-    exercises: []
-    acceptance: [能计算一帧传输时间并解释采样误差风险]
+    exercises: [uart-ex-frame-time-v1, uart-ex-sampling-drift-v1]
+    acceptance:
+      - 能根据帧格式和波特率计算单个位时间与一帧时间
+      - 能解释为什么波特率误差在帧尾造成更大的累计采样偏移
+      - 能说明理想漂移模型不能替代具体芯片的容差规格和实测
   - id: uart-u03-first-stm32-link
     title: STM32F103 第一次收发
     objective: 能安全接线并使用 HAL 轮询接口完成发送、接收和回环验证。
@@ -133,3 +144,25 @@ units:
 ### 完成证据
 
 你不需要背下 `A` 的比特。真正的验收是：换成字符 `1`、`U` 或 `z` 后，仍能独立解释 D0 为什么是当前值，并能指出接收端通过哪个电平变化发现起始位。
+
+## 第二单元：波特率、采样与误差
+
+### 先别把 baud 当成 byte/s
+
+在本课程的二电平 UART 中，1 baud 对应每秒 1 bit，但一帧并不只有数据位。8N1 每发送 8 bit 有效数据，还要发送 1 个起始位和 1 个停止位。因此 115200 baud 的理论有效字节率不是 115200 byte/s，而是最多约 11520 byte/s，实际还可能受到帧间空隙和软件处理影响。
+
+### 从单个位推到整帧
+
+位时间是波特率的倒数。9600 baud 的一个位约占 `104.17 μs`；8N1 一帧共 10 bit，所以约占 `1.042 ms`。把波特率提升到 115200 后，同一帧约占 `86.8 μs`。
+
+这套计算不依赖 STM32。它先建立通用时间模型，后续再把 STM32F103 的外设时钟和 `BRR` 分频映射进来。
+
+### 为什么帧尾更危险
+
+接收端在起始位处重新获得时间参考，随后使用自己的本地时钟预测每个数据位的中心。如果接收端的位时间比发送端短一点，它的采样点会越来越靠前；如果更长，则越来越靠后。误差不是在每一位自动清零，而是一直积累到这一帧结束。
+
+下面的互动采用理想模型：假定起始沿检测完全准确，只观察两端位时间差带来的累计漂移。它适合帮助理解方向和趋势，但不是 STM32F103 的容差测试工具。
+
+### 完成证据
+
+你应当能解释：为什么相同帧格式下高波特率耗时更短；为什么增加校验位或停止位会增加帧时间；为什么“理想采样点还没越界”不能证明真实硬件一定可靠。
