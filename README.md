@@ -66,6 +66,7 @@ Embedded Learning Lab
 - [信息架构草案](docs/product/information-architecture.md)
 - [仓库结构](docs/architecture/repository-structure.md)
 - [决策记录](docs/project/decisions.md)
+- [项目专用技能](skills/README.md)
 
 ## 项目原则
 

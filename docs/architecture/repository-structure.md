@@ -17,6 +17,7 @@ embedded-learning-lab/
 │  └─ site/               # Astro 主站及其独立 npm 锁文件
 ├─ content/
 │  └─ knowledge/          # 框架无关的公开 Knowledge 权威源
+├─ skills/                # 随仓库版本化的项目专用 Codex 技能
 ├─ docs/
 │  ├─ project/
 │  │  ├─ current-state.md # 当前状态与下一步

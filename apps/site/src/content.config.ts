@@ -29,4 +29,22 @@ const knowledge = defineCollection({
   }),
 });
 
-export const collections = { knowledge };
+const course = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: '../../content/courses' }),
+  schema: z.object({
+    id: z.string(), title: z.string(), slug: z.string(), summary: z.string(),
+    type: z.literal('course'), domain, tags: z.array(z.string()).default([]),
+    platforms: z.array(z.string()).default([]), maturity, visibility,
+    createdAt: z.coerce.date(), updatedAt: z.coerce.date(), verifiedAt: z.coerce.date().optional(),
+    publishedAt: z.coerce.date().optional(), prerequisites: z.array(z.string()).default([]),
+    related: z.array(z.string()).default([]), authors: z.array(z.string()).min(1),
+    license: z.literal('CC-BY-SA-4.0'), sources: z.array(source).min(1), version: z.string(),
+    units: z.array(z.object({
+      id: z.string(), title: z.string(), objective: z.string(),
+      status: z.enum(['planned', 'in-progress', 'available']),
+      knowledge: z.array(z.string()).default([]),
+    })).min(1),
+  }),
+});
+
+export const collections = { knowledge, course };

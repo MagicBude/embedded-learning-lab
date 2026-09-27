@@ -1,0 +1,8 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/site';
+const courses = (await getCollection('course')).filter(({ data }) => data.maturity === 'verified' && data.visibility === 'public');
+---
+<BaseLayout title="课程"><div class="container page"><p class="eyebrow">Courses</p><h1>渐进课程</h1><p class="intro">课程组织学习顺序、练习和反馈；稳定技术事实仍由 Knowledge 维护。</p>{courses.length ? <div class="content-list">{courses.map(({data})=><a class="content-row" href={withBase(`/courses/${data.slug}/`)}><span class="eyebrow">Course</span><div><h3>{data.title}</h3><p>{data.summary}</p></div><span class="tag verified">✓ 可学习</span></a>)}</div> : <div class="surface empty"><h2>UART 课程正在审核</h2><p>课程骨架已经建立，完成首个单元、练习反馈和实验验证后再正式开放。</p><a href={withBase('/knowledge/')}>先从已验证 Knowledge 开始 →</a></div>}</div></BaseLayout>
+<style>.page{padding-block:3rem}.page h1{margin:.5rem 0}.intro{max-width:46rem;color:var(--color-text-muted)}.empty{max-width:46rem;margin-top:2rem;padding:1.5rem}.empty h2{margin-top:0}.empty p{color:var(--color-text-muted)}</style>

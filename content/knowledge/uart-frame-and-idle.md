@@ -1,8 +1,8 @@
 ---
 id: knowledge-uart-frame-and-idle-v1
-title: UART 帧与空闲电平
+title: UART 是什么：从电平到数据帧
 slug: uart-frame-and-idle
-summary: 从线路空闲、起始位和停止位理解异步串行接收端如何发现一帧数据。
+summary: 从“两个设备怎样交换一个字符”开始，理解 UART、串行传输、收发线路和最基本的数据帧。
 type: knowledge
 domain: interfaces-and-communication
 tags: [UART, serial, frame]
@@ -13,11 +13,21 @@ createdAt: 2026-09-27
 updatedAt: 2026-09-27
 verifiedAt: 2026-09-27
 publishedAt: 2026-09-27
-prerequisites: []
-related: []
+prerequisites: [knowledge-data-and-byte-stream-v1]
+related: [knowledge-c-buffer-model-v1, knowledge-stm32f103-usart-v1]
 authors: [MagicBude]
 license: CC-BY-SA-4.0
 sources:
+  - id: rfc20-ascii
+    type: standard
+    title: RFC 20 — ASCII format for network interchange
+    organization: RFC Editor
+    url: https://www.rfc-editor.org/rfc/rfc20.html
+    locator: Sections 2 and 3
+    accessedAt: 2026-09-27
+    supports:
+      - ASCII 使用 7 位编码表示字符
+      - 字符 A 的编码值为十六进制 41
   - id: st-rm0008-usart
     type: official
     title: RM0008 STM32F10xxx reference manual
@@ -30,6 +40,22 @@ sources:
       - RX 使用过采样恢复数据并区分有效输入与噪声
       - 外设提供帧错误、噪声错误、过载错误和奇偶校验错误标志
 ---
+
+## 先回答：UART 是什么
+
+UART（Universal Asynchronous Receiver/Transmitter，通用异步收发器）是一类把设备内部的并行数据转换成串行比特、再从串行比特恢复数据的硬件外设。
+
+“串行”表示比特沿一根发送线依次出现；“异步”表示两端不共享一根持续的时钟线，而是预先约定传输速度和帧格式。最常见的全双工连接至少包含：
+
+- 设备 A 的 TX（发送）接设备 B 的 RX（接收）；
+- 设备 A 的 RX 接设备 B 的 TX；
+- 两端 GND 相连，建立共同的电压参考。
+
+UART 只规定收发器如何传送一帧比特，不规定插头、电压标准，也不自动规定一条“消息”在哪里结束。TTL/CMOS 电平 UART、RS-232 和 RS-485 不能因为都传串行数据就直接混接。
+
+## 一个字符如何变成线路上的变化
+
+假设程序发送 ASCII 字符 `A`。`A` 的编码值是十六进制 `0x41`，也就是一个数值为 65 的字节。软件把这个字节交给 UART 外设，UART 再根据双方约定的帧格式逐位发送。字符编码负责“这个数代表哪个字符”，UART 负责“这些比特怎样按时间送到另一端”，两者不是同一层。[^rfc20]
 
 ## 先从空闲状态开始
 
@@ -65,3 +91,4 @@ STM32F103 USART 为过载、噪声、帧和奇偶校验错误提供状态标志�
 - 在固件中统计并输出 USART 错误标志，而不是静默丢弃。
 
 [^st-rm0008-usart]: STMicroelectronics, RM0008, Section 27, Universal synchronous asynchronous receiver transmitter.
+[^rfc20]: RFC 20, ASCII format for network interchange, character representation and code table.

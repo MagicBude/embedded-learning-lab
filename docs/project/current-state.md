@@ -16,10 +16,13 @@ updated: 2026-09-27
 - Q1–Q97 的规划、设计与视觉确认已经完成并融入正式文档；
 - `apps/site/` 已完成 Astro、MDX、Content Collections、Pagefind 和 npm 基础；
 - 已实现浅深主题、响应式导航、首页、路线、Knowledge、搜索、关于和 404 页面；
-- 根目录 `content/knowledge/` 已接入 Schema，并有第一篇经官方资料核对的 UART Knowledge；
+- 根目录 `content/knowledge/` 已形成数据与字节流、C 缓冲区、UART 通用原理和 STM32F103 USART 四篇最小知识链；
+- `content/courses/uart-foundations.md` 已建立 6 单元课程骨架，当前保持 `review / unlisted`，尚未进入搜索或正式课程列表；
+- Knowledge 详情页会展示“建议先读”和“继续学习”，原 UART URL 已改写为从“什么是 UART”开始的入门页；
+- 项目专用 `teach` 技能已适配内容模型，并以仓库 `skills/teach/` 为权威版本；
 - GitHub Pages 工作流已经建立；本地类型检查和生产构建均通过；
 - 已在真实浏览器验证桌面端、320px 移动端、主题切换和 UART 搜索；
-- 下一工作单元转向补齐 UART 的最小知识链和课程骨架。
+- 下一工作单元转向完成课程第一单元、练习反馈和 UART 信号互动。
 
 ## 已稳定方向
 
@@ -32,11 +35,11 @@ updated: 2026-09-27
 
 ## 下一步
 
-1. 补齐数据表示与字节流、C 缓冲区模型、UART 通用原理和 STM32F103 USART 实现四组最小 Knowledge；
-2. 建立 UART 课程 manifest、章节骨架和 Knowledge 关联；
-3. 实现最小互动与实机验证步骤，再加入少量分层面试题；
-4. 扩充内容校验和自动检查，并验证 GitHub Pages 线上部署结果。
+1. 用项目 `teach` 技能完成 UART 课程第一单元及即时练习；
+2. 实现 UART 帧、传输时间与采样误差的最小互动；
+3. 补充 STM32F103C8T6 安全接线、轮询回环和证据记录；
+4. 扩充关系与发布资格校验，再加入少量分层面试题。
 
 ## 阻塞项
 
-GitHub Actions 的构建任务已经成功，但首次部署因仓库尚未启用 GitHub Pages 而失败。需要由仓库管理员在 `Settings → Pages → Build and deployment → Source` 选择 **GitHub Actions**，随后重新运行部署；这不影响本地实现和下一内容工作单元。
+无。用户已完成 GitHub Pages 发布源设置；本工作单元推送后需要确认首次成功部署。
