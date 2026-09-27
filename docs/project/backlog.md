@@ -9,6 +9,7 @@ updated: 2026-09-27
 
 - 建立 STM32F103C8T6 安全接线、轮询回环与证据记录；
 - 加入少量分层面试题，并扩充内容与链接校验。
+- 跟踪并消除 Astro 7 / MDX 构建产生的 `use astro:head-inject` 模块指令警告；
 
 ## next
 

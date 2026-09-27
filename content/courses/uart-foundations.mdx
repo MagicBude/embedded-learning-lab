@@ -1,0 +1,347 @@
+---
+id: course-uart-foundations-v1
+title: UART：从一个字符到可靠串口程序
+slug: uart-foundations
+summary: 从“UART 到底是什么”开始，沿着字符、字节、数据帧和真实线路，在 STM32F103C8T6 上完成可测量、可排错的串口收发。
+type: course
+domain: interfaces-and-communication
+tags: [UART, STM32F103, serial, debugging]
+platforms: [generic, STM32F103C8T6]
+maturity: review
+visibility: unlisted
+createdAt: 2026-09-27
+updatedAt: 2026-09-27
+prerequisites: []
+related:
+  - knowledge-data-and-byte-stream-v1
+  - knowledge-uart-frame-and-idle-v1
+  - knowledge-c-buffer-model-v1
+  - knowledge-stm32f103-usart-v1
+authors: [MagicBude]
+license: CC-BY-SA-4.0
+version: 0.2.0
+sources:
+  - id: rfc20-ascii
+    type: standard
+    title: RFC 20 — ASCII format for network interchange
+    organization: RFC Editor
+    url: https://www.rfc-editor.org/rfc/rfc20.html
+    locator: Sections 2 and 3
+    accessedAt: 2026-09-27
+    supports: [字符与编码值的关系]
+  - id: iso-wg14-n1570
+    type: standard
+    title: ISO/IEC 9899:201x Committee Draft N1570
+    organization: ISO/IEC JTC1/SC22/WG14
+    url: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf
+    locator: Object representation, arrays and pointer arithmetic
+    accessedAt: 2026-09-27
+    supports: [课程中的字节、数组、指针和缓冲区边界]
+  - id: st-rm0008-usart
+    type: official
+    title: RM0008 STM32F10xxx reference manual
+    organization: STMicroelectronics
+    url: https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101-103-105-107-stm32f100-series-armbased-32bit-mcus-stmicroelectronics.pdf
+    locator: Sections 7, 9 and 27
+    accessedAt: 2026-09-27
+    supports: [STM32F103 时钟、GPIO 和 USART 外设行为]
+  - id: st-um1850-hal
+    type: official
+    title: Description of STM32F1 HAL and low-layer drivers
+    organization: STMicroelectronics
+    url: https://www.st.com/resource/en/user_manual/dm00154093-description-of-stm32f1-hal-and-lowlayer-drivers-stmicroelectronics.pdf
+    locator: HAL UART driver chapter
+    accessedAt: 2026-09-27
+    supports: [STM32F1 HAL UART 的轮询、中断和 DMA 接口]
+  - id: st-an6363-uart-clock
+    type: official
+    title: AN6363 — Introduction to clock requirements and calibration for STM32 MCUs
+    organization: STMicroelectronics
+    url: https://www.st.com/resource/en/application_note/an6363-introduction-to-clock-requirements-and-calibration-for-stm32-mcus-stmicroelectronics.pdf
+    locator: Section 2.1, UART
+    accessedAt: 2026-09-27
+    supports: [UART 时钟误差、采样位置漂移和真实容差影响因素]
+units:
+  - id: uart-u01-byte-to-wire
+    title: UART 是什么：从设备到线路
+    objective: 能说明 UART 解决什么问题、怎样连接、规定与不规定什么，并解释字符 A 如何变成 8N1 线路帧。
+    status: available
+    knowledge: [knowledge-data-and-byte-stream-v1, knowledge-uart-frame-and-idle-v1]
+    exercises: [uart-ex-system-boundary-v1, uart-ex-frame-builder-v1, uart-ex-start-edge-v1]
+    acceptance:
+      - 能用自己的话解释 UART、串行、异步和全双工
+      - 能画出两台设备的 TX、RX、GND 交叉连接并指出电平兼容风险
+      - 能区分 UART 外设、USB-UART、RS-232、RS-485 和上层消息协议
+      - 能把单个 ASCII 字符写成十六进制与 8-bit 二进制
+      - 能按最低有效位优先画出对应的 8N1 帧
+  - id: uart-u02-speed-and-sampling
+    title: 波特率、采样与误差
+    objective: 能由位时间推导整帧耗时，并解释异步接收端如何采样以及误差为什么向帧尾积累。
+    status: available
+    knowledge: [knowledge-uart-frame-and-idle-v1]
+    exercises: [uart-ex-frame-time-v1, uart-ex-sampling-drift-v1]
+    acceptance:
+      - 能根据帧格式和波特率计算单个位时间与一帧时间
+      - 能解释接收端为何需要从起始位重新获得时间参考
+      - 能解释为什么波特率误差在帧尾造成更大的累计采样偏移
+      - 能说明理想漂移模型不能替代具体芯片的容差规格和实测
+  - id: uart-u03-first-stm32-link
+    title: STM32F103 第一次收发
+    objective: 能安全接线并使用 HAL 轮询接口完成发送、接收和回环验证。
+    status: planned
+    knowledge: [knowledge-stm32f103-usart-v1]
+    exercises: []
+    acceptance: [能完成安全接线、轮询收发和回环证据记录]
+  - id: uart-u04-buffer-and-interrupt
+    title: 中断与缓冲区
+    objective: 能用容量和有效长度管理接收数据，并解释阻塞、溢出和丢字节的原因。
+    status: planned
+    knowledge: [knowledge-c-buffer-model-v1, knowledge-stm32f103-usart-v1]
+    exercises: []
+    acceptance: [能实现有边界检查的非阻塞接收并观察溢出行为]
+  - id: uart-u05-debug-and-evidence
+    title: 用证据排查串口故障
+    objective: 能根据接线、状态标志、日志和逻辑分析仪证据定位常见故障。
+    status: planned
+    knowledge: [knowledge-uart-frame-and-idle-v1, knowledge-stm32f103-usart-v1]
+    exercises: []
+    acceptance: [能依据状态、日志或波形定位至少一种人为故障]
+  - id: uart-u06-dma-and-messages
+    title: DMA 与消息边界
+    objective: 能说明 DMA 解决了什么、没有解决什么，并为字节流设计明确的消息边界。
+    status: planned
+    knowledge: [knowledge-data-and-byte-stream-v1, knowledge-c-buffer-model-v1]
+    exercises: []
+    acceptance: [能区分 DMA 搬运边界与上层消息边界]
+---
+
+## 开始之前
+
+这是一门真正从零开始的 UART 课程。你不需要先知道寄存器，也不需要先读完 Knowledge。课程会把完成当前任务所需的概念在这里讲清楚；关联 Knowledge 用于课后查阅、复习和追溯来源，而不是把关键解释推给另一个页面。
+
+我们最终要完成的不是“会调用一个 HAL 函数”，而是建立一条能观察、能计算、能测量、能排错的完整链路：
+
+```text
+人输入字符
+  ↓ 字符编码
+程序中的数值与字节
+  ↓ UART 外设组帧
+TX 引脚上的高低电平
+  ↓ 导线与共同电压参考
+另一端 RX 引脚采样
+  ↓ UART 外设还原字节
+接收程序解释数据
+```
+
+学完六个单元后，你应该能在 STM32F103C8T6 与 3.3 V USB-UART 之间完成安全接线，实现轮询与非阻塞收发，解释缓冲区和消息边界，并主动制造和定位至少一种配置错误或接收溢出。
+
+---
+
+## 第一单元：UART 是什么——从设备到线路
+
+### 1. 先从一个真实问题开始
+
+STM32 读到了温度值 `25`，怎样把它交给电脑显示？最直接的想法是准备很多根线，一次把一个数的所有 bit 都送出去。但引脚和导线很宝贵，设备之间也未必适合铺一排并行线。
+
+另一种办法是只用一根发送线，让 bit 按时间一个接一个通过。发送端负责“拆成一串”，接收端负责“按同样规则拼回来”。这就是**串行传输**的基本想法。
+
+UART（Universal Asynchronous Receiver/Transmitter，通用异步收发器）是 MCU 或其他芯片中的一种通信外设。它把内部数据转换为按时间排列的串行 bit，也能从串行电平中恢复数据。
+
+把英文名称拆开看：
+
+- **Universal（通用）**：它不是只服务某一种传感器或某一种消息格式；
+- **Asynchronous（异步）**：两端不额外连接一根持续工作的共享时钟线；
+- **Receiver/Transmitter（接收器/发送器）**：它同时包含接收和发送方向。
+
+> “异步”不等于双方不需要时间约定。恰恰相反：因为没有共享时钟线，两端必须事先约定波特率、数据位、校验和停止位。
+
+### 2. UART 在完整系统里处于哪一层
+
+以“STM32 向电脑打印温度”为例，真正参与工作的角色不止 UART：
+
+```text
+STM32 程序
+  │ 交给 USART1 一个或多个字节
+  ▼
+STM32 USART1 ── TX/RX 高低电平 ── USB-UART 转换器
+                                      │ 转成 USB 数据
+                                      ▼
+                                  电脑串口驱动
+                                      │
+                                      ▼
+                                  串口终端软件
+```
+
+STM32F103 的外设名称通常写作 **USART（Universal Synchronous/Asynchronous Receiver/Transmitter，通用同步/异步收发器）**。它比纯 UART 多了同步模式能力；当我们把它配置成异步模式时，就按 UART 的方式使用。
+
+USB-UART 转换器不是“UART 协议本身”。它一侧连接 MCU 的 UART 电平引脚，另一侧连接电脑 USB。串口终端软件更不是 UART 硬件，它只是让人查看和发送电脑串口驱动交付的字节。
+
+### 3. 最小连接为什么通常有三根线
+
+两台设备双向通信时，最小连接通常是：
+
+```text
+设备 A                         设备 B
+TX（发送） ─────────────────▶ RX（接收）
+RX（接收） ◀───────────────── TX（发送）
+GND       ─────────────────── GND
+```
+
+TX 要接对方 RX，因为一个出口要接另一个入口。GND 也必须相连，因为“3.3 V”和“0 V”都需要共同参考；没有共同参考，两端对高低电平的判断可能不一致。
+
+同时存在独立的 TX 和 RX，意味着两个方向可以同时工作，这叫**全双工**。如果当前应用只需要单向打印日志，可以只连接 STM32 TX、转换器 RX 和 GND，但这不改变 UART 外设本身具有两个方向。
+
+#### 接线前的安全检查
+
+不要看到“串口”两个字就直接插线。至少先确认：
+
+1. 两侧逻辑电平是否兼容；本课程使用 **3.3 V UART 电平**；
+2. 转换器引脚标注的是 TX/RX/GND，还是带有 VCC 供电脚；
+3. 不要把传统 RS-232 电平直接接到 STM32 GPIO；
+4. 不要把 USB 接口的数据线直接接到 UART TX/RX；USB-UART 模块负责两种接口之间的转换。
+
+### 4. UART 规定什么，又不规定什么
+
+UART 解决的是“一帧 bit 怎样按时间发送和接收”。它通常涉及空闲电平、起始位、数据位、可选校验位、停止位和传输速度。
+
+UART **不自动规定**：
+
+- 使用哪一种插头；
+- 远距离线路应该采用什么电气标准；
+- 一串字节中哪个是命令、长度或校验和；
+- 一条完整消息在哪里结束；
+- 丢失数据后是否重发。
+
+因此，下列词语不能互相替代：
+
+| 名称 | 它解决的问题 |
+| --- | --- |
+| UART / USART 异步模式 | 芯片怎样把字节变成按时间排列的 bit，并恢复回来 |
+| 3.3 V CMOS/TTL UART 电平 | 引脚用怎样的电压表示逻辑 0 和 1 |
+| RS-232、RS-485 | 线路驱动、电气特性和适用连接方式 |
+| USB-UART | 在 USB 与 UART 电平接口之间转换 |
+| Modbus RTU、自定义帧 | 多个字节怎样组成有意义的消息 |
+| 串口助手/终端 | 人怎样在电脑上查看和发送串口字节 |
+
+如果把这些层混在一起，常见后果就是错误接线，或者以为“能打开 COM 口”就代表 MCU 的帧参数一定正确。
+
+### 5. 一个字符怎样走到 TX 引脚
+
+现在沿着完整链路发送字符 `A`：
+
+1. 人看到的是字符 `A`；
+2. ASCII 编码把 `A` 对应到数值 `65`，十六进制写作 `0x41`；
+3. 程序把 `0x41` 作为一个字节交给 UART；
+4. UART 根据双方约定的帧格式加入边界信息；
+5. TX 引脚在每个位时间输出相应的高低电平；
+6. 接收端在约定时刻采样，恢复出 `0x41`；
+7. 接收程序若按 ASCII 解释它，最终再次显示 `A`。
+
+这里发生了三次不能省略的“解释”：字符由编码规则解释，字节由 UART 帧规则传送，收到的字节再由应用程序决定含义。UART 自己并不知道 `0x41` 是字母、传感器数值还是某条命令的一部分。
+
+### 6. 空闲、起始位和 8N1
+
+常见异步 UART 在没有发送数据时保持高电平。发送器先输出一个低电平**起始位**，接收端看到从高到低的变化后开始计时；随后发送数据位；最后用高电平**停止位**结束这一帧。
+
+最常见的 `8N1` 可以这样拆：
+
+- `8`：8 个数据位；
+- `N`：No parity，无校验位；
+- `1`：1 个停止位。
+
+加上 1 个起始位，一帧总共占 10 个位时间。UART 通常先发送最低有效位（LSB）。`0x41` 的普通二进制写法与线路时间顺序不同：
+
+```text
+普通写法（左边是 D7）：D7 D6 D5 D4 D3 D2 D1 D0 = 0 1 0 0 0 0 0 1
+发送顺序（左边先发生）：Start D0 D1 D2 D3 D4 D5 D6 D7 Stop
+                         0    1  0  0  0  0  0  1  0   1
+```
+
+下面不要只看答案。先预测 D0，再让工具生成完整帧；换用 `1`、`U` 和 `z` 重复练习，直到不再依赖记忆 `A` 的结果。
+
+<UartByteToWireLesson />
+
+### 7. 第一单元自检
+
+合上页面或者移开视线，用自己的话回答：
+
+1. UART 为什么叫“异步”？没有时钟线后，双方必须约定什么？
+2. 为什么 TX 接 RX，而不是 TX 接 TX？为什么还需要 GND？
+3. USB-UART、RS-232 和 UART 外设分别处于哪一层？
+4. `0x41` 为什么只有在按 ASCII 解释时才是 `A`？
+5. 对 8N1 而言，发送一个字节为什么需要 10 个位时间？
+
+如果第 1～3 题仍说不清，先不要急着进寄存器和 HAL。回到本单元的系统图和分层表，再画一遍自己的版本。
+
+---
+
+## 第二单元：波特率、采样与误差
+
+### 1. 没有共享时钟，接收端怎样知道何时读取
+
+发送端不会额外告诉接收端“现在是 D3 的正中间”。两端先约定波特率，接收端检测到起始位后，用自己的本地时钟推算每一个后续位的采样位置。
+
+可以把它想成两个人事先约定每隔一秒读一个数字：第一个人按自己的秒表依次举牌，第二个人看到开始信号后也启动秒表，并尽量在每个时间格的中间读取。两只表越接近，越不容易读到相邻时间格。
+
+### 2. baud、bit/s 和 byte/s 不是同一个量
+
+**波特率（baud rate）**表示每秒传输多少个符号。在本课程讨论的二电平 UART 中，一个符号承载一个 bit，所以数值上常见 `115200 baud = 115200 bit/s`。
+
+但 `115200 bit/s` 不等于 `115200 byte/s`。以 8N1 为例，每个有效字节需要 10 个线路 bit：
+
+```text
+理论有效字节率 = 115200 bit/s ÷ 10 bit/帧 = 11520 byte/s
+```
+
+这还是连续发送且忽略软件间隙时的理论上限。增加校验位或停止位，会让每帧更长；程序来不及供数或线路中存在空闲，也会降低实际吞吐量。
+
+### 3. 从一个位算到一整帧
+
+位时间是波特率的倒数：
+
+```text
+位时间 = 1 ÷ 波特率
+帧时间 = 帧总位数 ÷ 波特率
+```
+
+以 `9600 baud、8N1` 为例：
+
+1. 单个位时间：`1 ÷ 9600 s ≈ 104.17 μs`；
+2. 一帧总位数：`1 起始 + 8 数据 + 0 校验 + 1 停止 = 10 bit`；
+3. 一帧时间：`10 × 104.17 μs ≈ 1.042 ms`；
+4. 理论有效字节率：`9600 ÷ 10 = 960 byte/s`。
+
+把波特率改为 `115200`，帧的结构没有变化，但每个位更短，所以同一个 8N1 帧只需约 `86.8 μs`。
+
+### 4. 为什么误差会向帧尾积累
+
+接收端在起始位处获得一次时间参考，之后用自己的时钟继续推算。如果接收端认为每个位比发送端实际的位时间短，它会一次比一次更早采样；如果认为位时间更长，它会越来越晚采样。
+
+假设两端一开始对准位中心，但每经过一个位就偏离一点。靠近起始位时偏移还小，靠近帧尾时已经累积多次，所以后面的数据位和停止位更容易受到影响。下一帧新的起始沿会再次提供时间参考，因此这种漂移通常按帧讨论，而不是无限跨帧累加。
+
+### 5. 为什么不能背一个固定“允许误差百分比”
+
+网络文章经常给出一个单一阈值，但真实接收余量还取决于帧长度、过采样、起始沿检测、波特率分频量化、发送端与接收端各自的时钟误差、线路边沿和噪声。不同 MCU、配置和环境不能用同一个颜色或百分比替代数据手册与实测。
+
+下面的互动故意使用简化模型：起始沿完全准确，只观察两端位时间差造成的累计漂移。它帮助你理解方向和趋势，不负责宣布某块 STM32 板“必然可靠”。
+
+<UartTimingLesson />
+
+### 6. 第二单元自检与迁移
+
+先不操作控件，独立完成：
+
+1. `57600 baud、8E1` 一帧有多少 bit？一帧大约多久？
+2. 把停止位从 1 改为 2，理论有效字节率会怎样变化？为什么？
+3. 接收端时钟偏快时，采样点会逐渐靠前还是靠后？
+4. 互动图中采样点未越界，为什么仍不能证明实机配置可靠？
+
+参考推导：`8E1` 包含 1 个起始位、8 个数据位、1 个偶校验位和 1 个停止位，共 11 bit；帧时间约为 `11 ÷ 57600 ≈ 191 μs`。其余问题应能用“每帧开销”和“模型边界”解释，而不是背答案。
+
+---
+
+## 接下来学什么
+
+前两单元建立的是通用模型。第三单元才会把这套模型落到 STM32F103C8T6：识别 USART1、GPIO 和时钟的关系，完成 3.3 V USB-UART 安全接线，用 HAL 轮询接口发送第一个可测量字节，并保存串口终端与逻辑分析证据。
+
+课程当前仍处于审核态。后续单元会沿“先能观察，再解释代码；先建立正确性，再引入中断和 DMA”的顺序扩展。
