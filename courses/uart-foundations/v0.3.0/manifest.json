@@ -39,9 +39,9 @@
   "files": [
     { "path": "assets/course.css", "sha256": "e8cd6d1a5a27b7eee2454d96e553ceb2e23309be9625809c63ec8514b99a3a80", "bytes": 5130 },
     { "path": "assets/course.js", "sha256": "60a1de8dab5e1b692a52c8a5c393f2c184c4d8a599b13fc6ed06bca713378952", "bytes": 2854 },
-    { "path": "index.html", "sha256": "9ff9eb1224319a9ead7afa072c980a8ef0cbb6fc22162f19ae084e6e642434fb", "bytes": 2792 },
-    { "path": "lessons/0001-uart-is-what.html", "sha256": "065e75d0ca57ac5882e3ca7b19a79147d2ed1d4a61fb2c8d635f157b8990e0f4", "bytes": 7161 },
-    { "path": "lessons/0002-baud-and-sampling.html", "sha256": "9ee1f5c4157cf0b004d2ca75d2d51d197aba5a3ec85addf30dad190f036dd77a", "bytes": 5181 },
-    { "path": "reference/uart-beginner-quick-reference.html", "sha256": "b1a6f3e585b05be0e3362267b6cdb17c1c662ad1c28af6833b69d1dc7d5b5f0b", "bytes": 2295 }
+    { "path": "index.html", "sha256": "68c24d91f53328801034a1cc1fa10e574d3f63d0b186509e6e12433679947528", "bytes": 2795 },
+    { "path": "lessons/0001-uart-is-what.html", "sha256": "c1004f485a3002c4f691a22575241f66b243a210bb3a4fa08ee7431d105ab01c", "bytes": 7155 },
+    { "path": "lessons/0002-baud-and-sampling.html", "sha256": "b8d748b8bd11f72b37001e921d262b78afc551a9d8b6e40ceb6bed97e4e342f3", "bytes": 5174 },
+    { "path": "reference/uart-beginner-quick-reference.html", "sha256": "30f2579e72284f55d2f901ac55d3c53d2c574c12803e5eca49d5499cd4eb64c4", "bytes": 2296 }
   ]
 }
