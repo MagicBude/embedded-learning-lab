@@ -166,6 +166,12 @@ Astro 脚手架不承担产品视觉设计。进入实现前必须确认 `docs/p
 
 `information-architecture.md` 只维护栏目职责、页面层级、导航和 URL；`interface-wireframes.md` 是页面桌面、移动端结构和响应式规则的唯一来源。两者相互链接，不保留两套可能发生漂移的首页线稿。
 
+### D-025 — 第一版设计令牌与组件规范
+
+**状态：proposed**
+
+第一版采用 `design-tokens.md` 定义的语义色彩、系统字体、4px 间距体系、内容宽度、断点和克制动效，并以 `component-specification.md` 约束按钮、输入、标签、内容条目、导航、代码、技术图、进度和通用状态。用户完成视觉样张审阅后再转为 `accepted`。
+
 ## 待决定
 
 - UART 信号实验室完成技术原型后，是否需要引入一个客户端 UI 框架；

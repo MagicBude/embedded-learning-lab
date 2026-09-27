@@ -34,6 +34,8 @@ status: accepted
 - 课程协议：`../product/course-package-protocol.md`；
 - 信息架构：`../product/information-architecture.md`；
 - 视觉与 UI 设计：`../product/design-system.md`；
+- 设计令牌：`../product/design-tokens.md`；
+- 核心组件：`../product/component-specification.md`；
 - 页面线框：`../product/interface-wireframes.md`；
 - 技术架构：`../architecture/technical-architecture.md`；
 - 质量要求：`../standards/quality-standard.md`；
