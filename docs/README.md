@@ -26,6 +26,7 @@
 - `learning-roadmap.md`：完整学习主干、目标分支、阶段产出和验收；
 - `first-release-scope.md`：UART 第一版页面、内容、功能、非目标和验收；
 - `design-system.md`：视觉语言、设计令牌、页面模板、核心组件和 UI 验收；
+- `interface-wireframes.md`：关键页面的桌面、移动端骨架与响应式规则；
 - `information-architecture.md`：站点栏目、导航、页面结构和内容发现方式。
 
 ### `architecture/`

@@ -47,6 +47,7 @@ Embedded Learning Lab
 - [课程产物协议](docs/product/course-package-protocol.md)
 - [长期学习路线](docs/product/learning-roadmap.md)
 - [网站设计系统](docs/product/design-system.md)
+- [界面线框](docs/product/interface-wireframes.md)
 - [信息架构草案](docs/product/information-architecture.md)
 - [仓库结构](docs/architecture/repository-structure.md)
 - [决策记录](docs/project/decisions.md)
