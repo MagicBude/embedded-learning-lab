@@ -1,0 +1,6 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/site';
+---
+<BaseLayout title="搜索"><div class="container page"><p class="eyebrow">Search</p><h1>全站搜索</h1><p class="muted">搜索已发布的 Knowledge 和页面内容；未列出内容不会进入索引。</p><div class="search" data-pagefind-ignore><pagefind-config base-url={withBase('/')} bundle-path={withBase('/pagefind/')}></pagefind-config><pagefind-input placeholder="搜索知识与页面"></pagefind-input><pagefind-summary></pagefind-summary><pagefind-results></pagefind-results></div><noscript><p>搜索需要 JavaScript。你仍可以通过导航浏览全部已发布内容。</p></noscript></div><link rel="stylesheet" href={withBase('/pagefind/pagefind-component-ui.css')}/><script is:inline type="module" define:vars={{componentUrl:withBase('/pagefind/pagefind-component-ui.js')}}>import(componentUrl).catch(()=>{document.querySelector('.search').innerHTML='<p class="muted">开发模式下尚未生成搜索索引。请先运行正式构建。</p>'});</script></BaseLayout>
+<style>.page{padding-block:3rem}.search{margin-top:2rem;--pf-primary:var(--color-primary);--pf-text:var(--color-text);--pf-text-secondary:var(--color-text-muted);--pf-background:var(--color-surface);--pf-border:var(--color-border);--pf-border-focus:var(--color-border-strong);--pf-border-radius:10px}</style>

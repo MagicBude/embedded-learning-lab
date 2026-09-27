@@ -178,6 +178,12 @@ Astro 脚手架不承担产品视觉设计。进入实现前必须确认 `docs/p
 
 实现后的页面和组件必须经过 `docs/standards/visual-acceptance-checklist.md`。验收覆盖设计令牌一致性、排版、浅深主题、响应式、组件状态、内容类型、可访问性降级和数据真实性。
 
+### D-027 — 基础站点实现落点
+
+**状态：accepted**
+
+Astro 应用位于 `apps/site/` 并维护独立 npm 锁文件；框架无关的权威内容保留在根目录 `content/`，由 Content Collections 在构建期读取。第一实现单元已经落地基础页面、设计令牌、浅深主题、Pagefind 和 GitHub Pages 工作流，并以 UART Knowledge 验证内容到页面再到搜索的链路。
+
 ## 待决定
 
 - UART 信号实验室完成技术原型后，是否需要引入一个客户端 UI 框架；

@@ -8,18 +8,30 @@ Embedded Learning Lab（嵌入式学习实验室）是一个面向嵌入式系�
 
 ## 当前阶段
 
-项目处于 **Foundation / Planning** 阶段，产品、内容、技术、视觉与 UI 规划文档已经完成，正在等待进入实现阶段的明确授权。
+项目处于 **Implementation / First Vertical Slice** 阶段，正在实现基础站点和 UART 最小纵向切片。
 
-当前只进行：
+当前优先进行：
 
-- 产品定位与范围讨论；
-- 内容体系和信息架构设计；
-- 课程、知识、实验与项目之间的关系设计；
-- 仓库规范和协作规则建设；
-- 技术方案调研与决策记录；
-- 视觉语言、设计令牌、页面线框和组件状态设计。
+- UART 所需的最小 Knowledge、课程、互动与面试题；
+- 内容关联、自动检查和 GitHub Pages 线上验证；
+- 按规划文档进行响应式、可访问性和视觉验收。
 
-在规划完成并得到明确确认前，不初始化应用、不安装技术栈、不编写业务代码。
+基础站点、内容 Schema、浅深主题、响应式导航、Pagefind 和部署工作流已经落地。
+
+## 本地运行
+
+```bash
+cd apps/site
+npm install
+npm run dev
+```
+
+类型检查与生产构建：
+
+```bash
+npm run check
+npm run build
+```
 
 ## 长期内容边界
 
@@ -66,6 +78,6 @@ Embedded Learning Lab
 
 ## 仓库状态
 
-规划已经选择 Astro 静态输出、npm、Pagefind、GitHub Actions 和 GitHub Pages，但尚未初始化或安装。只有规划门槛满足且用户明确授权后才进入实现阶段。
+规划已完成并获得实现授权。第一版采用 Astro 静态输出、npm、Pagefind、GitHub Actions 和 GitHub Pages，按 UART 最小纵向切片逐步实现。
 
 自创代码采用 [MIT](LICENSE)，原创文章、课程正文和图表采用 [CC BY-SA 4.0](CONTENT-LICENSE.md)。第三方材料边界见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。

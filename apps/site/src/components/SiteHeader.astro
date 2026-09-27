@@ -1,0 +1,17 @@
+---
+import { withBase } from '@/lib/site';
+const currentPath = Astro.url.pathname;
+const links = [{ href: '/', label: '首页' }, { href: '/paths/', label: '路线' }, { href: '/knowledge/', label: 'Knowledge' }, { href: '/search/', label: '搜索' }, { href: '/about/', label: '关于' }];
+---
+<header class="site-header"><div class="header-inner container">
+  <a class="brand" href={withBase('/')} aria-label="Embedded Learning Lab 首页">ELL</a>
+  <nav aria-label="主导航">{links.map((link) => {
+    const href = withBase(link.href);
+    const isCurrent = link.href === '/' ? currentPath === href : currentPath.startsWith(href);
+    return <a href={href} aria-current={isCurrent ? 'page' : undefined}>{link.label}</a>;
+  })}</nav>
+  <button class="theme-toggle" type="button" data-theme-toggle aria-label="切换明暗主题">◐</button>
+</div></header>
+<style>
+  .site-header{min-height:64px;display:flex;align-items:center;border-bottom:1px solid var(--color-border);background:var(--color-surface)}.header-inner{display:flex;align-items:center;gap:2rem}.brand{color:var(--color-primary);font-weight:800;letter-spacing:.04em;text-decoration:none}nav{flex:1;display:flex;justify-content:flex-end;gap:.25rem}nav a,.theme-toggle{min-height:44px;display:inline-flex;align-items:center;padding-inline:.75rem;border:0;border-radius:var(--radius-md);color:var(--color-text-muted);background:transparent;text-decoration:none}nav a:hover,nav a[aria-current='page'],.theme-toggle:hover{color:var(--color-text);background:var(--color-surface-subtle)}.theme-toggle{justify-content:center;min-width:44px}@media(max-width:40rem){.site-header{padding-block:.35rem}.header-inner{flex-wrap:wrap;gap:.15rem}.brand{flex:1}.theme-toggle{order:2}nav{order:3;flex-basis:100%;justify-content:space-between;gap:0}nav a{padding-inline:.4rem;white-space:nowrap}}
+</style>

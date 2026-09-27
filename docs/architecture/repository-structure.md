@@ -4,12 +4,19 @@ status: accepted
 
 # 仓库结构
 
-## 当前规划阶段
+## 当前实现结构
 
-当前只保留实际需要的治理和规划文件：
+当前仓库已经进入实现阶段，只创建承担真实职责的目录：
 
 ```text
 embedded-learning-lab/
+├─ .github/
+│  └─ workflows/
+│     └─ deploy.yml       # 检查、构建与 GitHub Pages 部署
+├─ apps/
+│  └─ site/               # Astro 主站及其独立 npm 锁文件
+├─ content/
+│  └─ knowledge/          # 框架无关的公开 Knowledge 权威源
 ├─ docs/
 │  ├─ project/
 │  │  ├─ current-state.md # 当前状态与下一步
@@ -27,20 +34,16 @@ embedded-learning-lab/
 └─ README.md
 ```
 
-## 实现阶段候选结构
+## 按需扩展结构
 
-以下是进入实现阶段后的目标结构。仍然只在职责真实出现时创建目录：
+以下目录只在对应职责真实出现时创建，不为长期蓝图预建空目录：
 
 ```text
 embedded-learning-lab/
-├─ apps/
-│  └─ site/              # Astro 主站
-├─ content/              # 公开 Markdown / MDX 权威内容
 ├─ courses/              # 课程 manifest、来源和批准产物
 ├─ packages/             # 出现真实复用后才创建
-├─ public/               # 静态资源
+├─ public/               # 跨应用共享的静态资源（若确有需要）
 ├─ scripts/              # 构建和内容工具
-├─ docs/                 # 项目文档
 └─ ...
 ```
 
