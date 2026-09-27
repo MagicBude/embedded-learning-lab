@@ -1,5 +1,5 @@
 ---
-status: in-progress
+status: accepted
 ---
 
 # 网站设计系统
@@ -74,7 +74,7 @@ Astro 只提供网站技术框架，不负责产品视觉设计。本项目不�
 
 最终令牌应能映射为 CSS 自定义属性，页面和组件不得直接散落未经定义的颜色、字号和间距值。
 
-第一版具体数值见 [`design-tokens.md`](design-tokens.md)。核心组件的状态、职责和验收边界见 [`component-specification.md`](component-specification.md)。两份文件在用户确认前保持 `proposed`。
+第一版具体数值见 [`design-tokens.md`](design-tokens.md)。核心组件的状态、职责和验收边界见 [`component-specification.md`](component-specification.md)。实现后的统一检查见 [`visual-acceptance-checklist.md`](../standards/visual-acceptance-checklist.md)。
 
 ## 页面模板
 
@@ -202,8 +202,8 @@ Astro 只提供网站技术框架，不负责产品视觉设计。本项目不�
 - 不把 Astro 示例主题或第三方组件默认样式直接当作产品设计；
 - 实现完成后同时检查桌面、移动端、浅色、深色、键盘和减少动画模式。
 
-## 待确认
+## 后续补充
 
-- 设计令牌样张是否通过审阅；
-- 核心组件状态样张是否通过审阅；
 - 互动实验专用控件是否需要在第一条 UART 纵向切片原型后补充。
+
+该项不是进入首个实现纵向切片的阻塞项：只有真实互动原型暴露出通用需求时，才把对应模式提升为设计系统组件。

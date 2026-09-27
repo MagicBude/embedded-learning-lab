@@ -20,7 +20,7 @@ status: accepted
 - [x] 确认技术栈和选择理由；
 - [x] 确认部署、搜索、分析和备份的第一版策略；
 - [x] 确认基础测试、可访问性和性能要求；
-- [ ] 确认视觉基调、设计令牌、关键页面线框和核心组件状态；
+- [x] 确认视觉基调、设计令牌、关键页面线框和核心组件状态；
 - [x] 确认开源许可证和内容许可证；
 - [x] 形成第一版可执行路线图。
 
@@ -39,6 +39,7 @@ status: accepted
 - 页面线框：`../product/interface-wireframes.md`；
 - 技术架构：`../architecture/technical-architecture.md`；
 - 质量要求：`../standards/quality-standard.md`；
+- 视觉验收：`../standards/visual-acceptance-checklist.md`；
 - 完整决策访谈：`planning-session.md`。
 
 ## 进入实现阶段的双重条件
@@ -50,7 +51,7 @@ status: accepted
 
 文档自行达到完整状态，不构成自动授权。
 
-截至当前，视觉与 UI 设计仍未完成，因此条件 1 尚未满足；条件 2 也尚未满足。用户确认的是“可以合并正式规划文档”，并未授权开始实现。
+截至当前，条件 1 已满足；条件 2 尚未满足。用户已经确认规划内容和视觉设计，但尚未明确授权开始实现。
 
 ## 实现阶段的第一个任务
 

@@ -8,7 +8,7 @@ Embedded Learning Lab（嵌入式学习实验室）是一个面向嵌入式系�
 
 ## 当前阶段
 
-项目处于 **Foundation / Planning** 阶段，核心产品、内容和技术方向已经确认，正在补齐视觉与 UI 设计并重新检查规划门槛。
+项目处于 **Foundation / Planning** 阶段，产品、内容、技术、视觉与 UI 规划文档已经完成，正在等待进入实现阶段的明确授权。
 
 当前只进行：
 
@@ -50,6 +50,7 @@ Embedded Learning Lab
 - [设计令牌](docs/product/design-tokens.md)
 - [核心组件规范](docs/product/component-specification.md)
 - [界面线框](docs/product/interface-wireframes.md)
+- [视觉验收清单](docs/standards/visual-acceptance-checklist.md)
 - [信息架构草案](docs/product/information-architecture.md)
 - [仓库结构](docs/architecture/repository-structure.md)
 - [决策记录](docs/project/decisions.md)

@@ -1,5 +1,5 @@
 ---
-status: proposed
+status: accepted
 ---
 
 # 核心组件规范

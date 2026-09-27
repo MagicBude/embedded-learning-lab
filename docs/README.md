@@ -14,7 +14,7 @@
 - `decisions.md`：重要决策与待决策事项。
 - `current-state.md`：跨电脑、跨会话和跨 Agent 的唯一续接入口；
 - `backlog.md`：按 `now / next / later / icebox` 管理尚未执行的工作；
-- `planning-session.md`：Q1–Q94 的完整规划决策访谈，用于回顾选项、选择和取代关系；正式设计文档仍是当前规则的权威来源。
+- `planning-session.md`：Q1–Q97 的完整规划决策记录，用于回顾选项、选择和取代关系；正式设计文档仍是当前规则的权威来源。
 
 ### `product/`
 
@@ -36,7 +36,7 @@
 管理仓库边界和未来技术系统的职责。
 
 - `repository-structure.md`：规划阶段与实现阶段的仓库结构；
-- `technical-architecture.md`：待讨论的技术架构问题，不提前锁定框架。
+- `technical-architecture.md`：已确认的技术架构、系统边界和演进约束。
 
 ### `standards/`
 
@@ -47,6 +47,7 @@
 - `ai-governance.md`：AI 辅助研究、写作和验证边界；
 - `visual-documentation-standard.md`：流程图、架构图、技术图和交互可视化规范。
 - `quality-standard.md`：自动检查、测试、可访问性、性能、浏览器和发布规范。
+- `visual-acceptance-checklist.md`：页面、组件、主题和响应式视觉验收清单。
 
 ### `research/`
 

@@ -168,9 +168,15 @@ Astro 脚手架不承担产品视觉设计。进入实现前必须确认 `docs/p
 
 ### D-025 — 第一版设计令牌与组件规范
 
-**状态：proposed**
+**状态：accepted**
 
-第一版采用 `design-tokens.md` 定义的语义色彩、系统字体、4px 间距体系、内容宽度、断点和克制动效，并以 `component-specification.md` 约束按钮、输入、标签、内容条目、导航、代码、技术图、进度和通用状态。用户完成视觉样张审阅后再转为 `accepted`。
+第一版采用 `design-tokens.md` 定义的语义色彩、系统字体、4px 间距体系、内容宽度、断点和克制动效，并以 `component-specification.md` 约束按钮、输入、标签、内容条目、导航、代码、技术图、进度和通用状态。设计令牌和组件样张已经通过用户审阅。
+
+### D-026 — 视觉验收
+
+**状态：accepted**
+
+实现后的页面和组件必须经过 `docs/standards/visual-acceptance-checklist.md`。验收覆盖设计令牌一致性、排版、浅深主题、响应式、组件状态、内容类型、可访问性降级和数据真实性。
 
 ## 待决定
 
