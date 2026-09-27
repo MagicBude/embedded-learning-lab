@@ -80,3 +80,17 @@ capture → draft → review → verified → archived
 - 只有真正需要互动组件的课程章节或实验使用 MDX；
 - MDX 属于可执行内容边界，只允许可信仓库作者维护；
 - 通用知识是权威基础，具体平台实现较短时作为明确分区，增长后拆为关联实现页。
+
+## 课程字段
+
+课程除公共字段外还记录：
+
+- `version`：课程内容版本；
+- `units`：具有稳定单元 ID 的有序单元；
+- 单元 `status`：`planned / in-progress / available`；
+- 单元 `objective`：一个可观察的学习目标；
+- 单元 `knowledge`：关联的权威 Knowledge ID；
+- 单元 `exercises`：稳定练习 ID；
+- 单元 `acceptance`：证明学习目标达成所需的可观察证据。
+
+单元可以在课程整体仍为 `review / unlisted` 时达到 `available`，用于内部预览和真实学习反馈；只有课程整体达到 `verified / public` 后，才进入正式课程列表与搜索。

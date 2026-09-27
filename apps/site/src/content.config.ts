@@ -43,6 +43,8 @@ const course = defineCollection({
       id: z.string(), title: z.string(), objective: z.string(),
       status: z.enum(['planned', 'in-progress', 'available']),
       knowledge: z.array(z.string()).default([]),
+      exercises: z.array(z.string()).default([]),
+      acceptance: z.array(z.string()).min(1),
     })).min(1),
   }),
 });
