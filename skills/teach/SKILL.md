@@ -11,7 +11,7 @@ Use this skill only inside the `embedded-learning-lab` repository. It turns a le
 
 ## Project is the teaching workspace
 
-Do not create the generic `MISSION.md`, `RESOURCES.md`, `lessons/`, `reference/`, or `assets/` workspace from the original Teach workflow. This repository already has authoritative equivalents:
+Do not create a generic repository-level `MISSION.md` or `RESOURCES.md` workspace from the original Teach workflow. This repository already has authoritative project equivalents. A versioned standalone course package may contain its own `lessons/`, `reference/`, and `assets/` directories when the package protocol and course design call for them; keep those directories inside that course version rather than duplicating repository-wide authorities.
 
 - `docs/project/project-charter.md` defines the mission;
 - `docs/product/learning-roadmap.md` defines long-term learning order;

@@ -39,6 +39,10 @@ const course = defineCollection({
     publishedAt: z.coerce.date().optional(), prerequisites: z.array(z.string()).default([]),
     related: z.array(z.string()).default([]), authors: z.array(z.string()).min(1),
     license: z.literal('CC-BY-SA-4.0'), sources: z.array(source).min(1), version: z.string(),
+    package: z.object({
+      version: z.string(), path: z.string(), status: z.enum(['draft', 'review', 'approved']),
+      entry: z.string(), manifest: z.string(),
+    }).optional(),
     units: z.array(z.object({
       id: z.string(), title: z.string(), objective: z.string(),
       status: z.enum(['planned', 'in-progress', 'available']),

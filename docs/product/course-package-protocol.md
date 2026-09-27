@@ -28,6 +28,19 @@ status: accepted
 
 批准后的 HTML 是版本化产物并进入 Git。部署时不重新调用 AI 生成。更新产生新版本，不覆盖无法追溯的旧产物。
 
+独立多页面课程使用以下包内结构，未使用的目录不创建：
+
+```text
+courses/<course-slug>/<version>/
+├─ manifest.json
+├─ index.html
+├─ lessons/     # 一课一个 HTML
+├─ reference/   # 课程速查与复习材料
+└─ assets/      # 当前版本共享样式、脚本与媒体
+```
+
+尚未撰写的课次只记录在 manifest 和主站课表中，不创建空 HTML。课程事实仍应与 Knowledge 权威源保持关系，课程包负责教学顺序、例子、练习和反馈。
+
 ## 主站接入
 
 - 主站负责课程入口、元数据、返回导航和学习状态；

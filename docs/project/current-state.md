@@ -17,8 +17,9 @@ updated: 2026-09-27
 - `apps/site/` 已完成 Astro、MDX、Content Collections、Pagefind 和 npm 基础；
 - 已实现浅深主题、响应式导航、首页、路线、Knowledge、搜索、关于和 404 页面；
 - 根目录 `content/knowledge/` 已形成数据与字节流、C 缓冲区、UART 通用原理和 STM32F103 USART 四篇最小知识链；
-- `content/courses/uart-foundations.md` 已建立 6 单元课程骨架，当前保持 `review / unlisted`，尚未进入搜索或正式课程列表；
-- UART 课程已重构为 MDX v0.2.0；第一单元从“UART 是什么”开始，完整覆盖用途、系统角色、TX/RX/GND、全双工、接口分层、字符到线路和 8N1，第二单元覆盖异步采样、速率计算和累计误差；
+- `content/courses/uart-foundations.md` 维护 6 单元课程元数据，当前保持 `review / unlisted`；
+- UART 课程已重构为 `courses/uart-foundations/v0.3.0/` 独立多页面课程包，包含 `index.html`、`lessons/`、`reference/`、`assets/` 和带文件校验值的 manifest；
+- 第一课从“UART 是什么”开始，完整覆盖用途、系统角色、TX/RX/GND、全双工、接口分层、字符到线路和 8N1；第二课覆盖异步采样、速率计算和累计误差；
 - 前两个单元已经包含教学叙事、分步示例、自检、稳定练习 ID、验收标准和原生 TypeScript 即时反馈，练习就地嵌入对应讲解；单元状态均为 `available`，整门课程仍保持审核态；
 - 第二单元可交互调整波特率、帧格式和接收端相对偏差，展示帧时间与理想累计采样漂移，并明确声明教学模型不等同于 STM32F103 器件容限；
 - Knowledge 详情页会展示“建议先读”和“继续学习”，原 UART URL 已改写为从“什么是 UART”开始的入门页；
@@ -50,4 +51,4 @@ updated: 2026-09-27
 
 ## 已知技术债
 
-- Astro 7 构建 MDX 课程时，Vite/Rolldown 会对 Astro 生成的 `use astro:head-inject` 指令给出一条模块指令保留警告；页面生成、类型检查和浏览器运行正常，但后续应通过依赖升级或官方修复消除，而不是永久忽略。
+- 独立课程目前通过主站按钮直接进入，尚未实现课程协议中规划的受限制嵌入容器、学习状态和 JSON 导入导出。

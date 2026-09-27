@@ -16,7 +16,9 @@ embedded-learning-lab/
 ├─ apps/
 │  └─ site/               # Astro 主站及其独立 npm 锁文件
 ├─ content/
-│  └─ knowledge/          # 框架无关的公开 Knowledge 权威源
+│  ├─ knowledge/          # 框架无关的公开 Knowledge 权威源
+│  └─ courses/            # 主站课程元数据、状态与内容关系
+├─ courses/               # 版本化独立课程包与 manifest
 ├─ skills/                # 随仓库版本化的项目专用 Codex 技能
 ├─ docs/
 │  ├─ project/
@@ -41,7 +43,6 @@ embedded-learning-lab/
 
 ```text
 embedded-learning-lab/
-├─ courses/              # 课程 manifest、来源和批准产物
 ├─ packages/             # 出现真实复用后才创建
 ├─ public/               # 跨应用共享的静态资源（若确有需要）
 ├─ scripts/              # 构建和内容工具

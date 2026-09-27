@@ -34,10 +34,10 @@ status: accepted
 - `apps/site/` 已建立 Astro 静态站点，使用 npm 锁定依赖；
 - 根目录 `content/` 保持为不依赖 Web 框架的权威内容源，由站点 Content Collection 读取并校验；
 - 已实现设计令牌、浅深主题、响应式主导航、首页、路线、Knowledge、搜索、关于与 404 页面；
-- 已接入课程 Collection、课程审核预览页和两个原生 TypeScript UART 互动；
+- 已接入课程 Collection、课程审核入口和 UART v0.3.0 独立多页面课程包；课程包含课程首页、两篇课文、共享样式、原生 JavaScript 互动和入门速查；
 - Pagefind 在生产构建后生成静态中文索引；
 - `.github/workflows/deploy.yml` 负责检查、构建并发布 GitHub Pages；仓库 Pages 发布源已启用并通过首次完整部署验证；
-- 当前尚未实现课程产物接入、浏览器学习状态、互动实验和专项内容校验脚本。
+- 当前已实现课程产物的静态复制和主站入口，尚未实现浏览器学习状态、受限制嵌入容器、互动实验和专项内容校验脚本。
 
 ## 内容层
 
@@ -55,6 +55,7 @@ status: accepted
 采用：
 
 - 课程 manifest、批准后的版本化 HTML 产物和校验值进入 Git；
+- 独立课程包位于 `courses/<course-slug>/<version>/`，内部按需使用 `index.html`、`lessons/`、`reference/` 和 `assets/`；
 - 独立 HTML 通过受限制的嵌入容器接入；
 - 小型消息协议同步课程、章节、版本和进度；
 - 主站统一入口和返回导航，课程内部允许专用教学布局；

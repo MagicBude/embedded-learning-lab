@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "courseId": "course-uart-foundations-v1",
+  "slug": "uart-foundations",
+  "version": "0.3.0",
+  "title": "UART：从一个字符到可靠串口程序",
+  "generatedAt": "2026-09-27T16:00:00+08:00",
+  "generator": {
+    "name": "embedded-learning-lab/teach",
+    "version": "0.2.0",
+    "configuration": "standalone-multipage-html; zh-CN; progressive lessons; native JavaScript"
+  },
+  "review": {
+    "technical": "review",
+    "content": "review",
+    "publication": "unlisted"
+  },
+  "licenses": {
+    "content": "CC-BY-SA-4.0",
+    "code": "MIT"
+  },
+  "entry": "index.html",
+  "units": [
+    { "id": "uart-u01-byte-to-wire", "order": 1, "status": "available", "path": "lessons/0001-uart-is-what.html" },
+    { "id": "uart-u02-speed-and-sampling", "order": 2, "status": "available", "path": "lessons/0002-baud-and-sampling.html" },
+    { "id": "uart-u03-first-stm32-link", "order": 3, "status": "planned" },
+    { "id": "uart-u04-buffer-and-interrupt", "order": 4, "status": "planned" },
+    { "id": "uart-u05-debug-and-evidence", "order": 5, "status": "planned" },
+    { "id": "uart-u06-dma-and-messages", "order": 6, "status": "planned" }
+  ],
+  "references": ["reference/uart-beginner-quick-reference.html"],
+  "sources": ["rfc20-ascii", "iso-wg14-n1570", "st-rm0008-usart", "st-um1850-hal", "st-an6363-uart-clock"],
+  "progressMigration": {
+    "from": "0.2.0",
+    "preserveUnitIds": true,
+    "requiresReview": ["uart-u01-byte-to-wire", "uart-u02-speed-and-sampling"],
+    "reason": "课程从单页 MDX 重构为独立多页面课程，学习顺序和练习位置发生重大变化。"
+  },
+  "files": [
+    { "path": "assets/course.css", "sha256": "e8cd6d1a5a27b7eee2454d96e553ceb2e23309be9625809c63ec8514b99a3a80", "bytes": 5130 },
+    { "path": "assets/course.js", "sha256": "60a1de8dab5e1b692a52c8a5c393f2c184c4d8a599b13fc6ed06bca713378952", "bytes": 2854 },
+    { "path": "index.html", "sha256": "9ff9eb1224319a9ead7afa072c980a8ef0cbb6fc22162f19ae084e6e642434fb", "bytes": 2792 },
+    { "path": "lessons/0001-uart-is-what.html", "sha256": "065e75d0ca57ac5882e3ca7b19a79147d2ed1d4a61fb2c8d635f157b8990e0f4", "bytes": 7161 },
+    { "path": "lessons/0002-baud-and-sampling.html", "sha256": "9ee1f5c4157cf0b004d2ca75d2d51d197aba5a3ec85addf30dad190f036dd77a", "bytes": 5181 },
+    { "path": "reference/uart-beginner-quick-reference.html", "sha256": "b1a6f3e585b05be0e3362267b6cdb17c1c662ad1c28af6833b69d1dc7d5b5f0b", "bytes": 2295 }
+  ]
+}
