@@ -25,7 +25,7 @@
     { "id": "uart-u02-character-to-frame", "order": 2, "status": "available", "path": "lessons/0002-character-to-frame.html" },
     { "id": "uart-u03-baud-and-sampling", "order": 3, "status": "available", "path": "lessons/0003-baud-and-sampling.html" },
     { "id": "uart-u04-first-transmit", "order": 4, "status": "available", "path": "lessons/0004-first-transmit.html" },
-    { "id": "uart-u05-polling-receive", "order": 5, "status": "planned" },
+    { "id": "uart-u05-polling-receive", "order": 5, "status": "available", "path": "lessons/0005-polling-receive.html" },
     { "id": "uart-u06-stream-string-buffer", "order": 6, "status": "planned" },
     { "id": "uart-u07-interrupt-receive", "order": 7, "status": "planned" },
     { "id": "uart-u08-ring-buffer", "order": 8, "status": "planned" },
@@ -33,7 +33,7 @@
     { "id": "uart-u10-dma-idle-messages", "order": 10, "status": "planned" }
   ],
   "references": ["reference/uart-beginner-quick-reference.html"],
-  "sources": ["rfc20-ascii", "iso-wg14-n1570", "st-rm0008-usart", "st-ds5319-f103x8-xb", "st-um1850-hal", "st-an6363-uart-clock"],
+  "sources": ["rfc20-ascii", "iso-wg14-n1570", "st-rm0008-usart", "st-ds5319-f103x8-xb", "st-um1850-hal", "st-stm32f1-hal-uart-driver", "st-an6363-uart-clock"],
   "progressMigration": {
     "from": "0.3.0",
     "preserveUnitIds": false,
@@ -43,11 +43,12 @@
   "files": [
     { "path": "assets/course.css", "sha256": "081574215bfb8c71038948147280425166dd84a919682f33202291aa08155ae4", "bytes": 7212 },
     { "path": "assets/course.js", "sha256": "60a1de8dab5e1b692a52c8a5c393f2c184c4d8a599b13fc6ed06bca713378952", "bytes": 2854 },
-    { "path": "index.html", "sha256": "d43613cbd7f0d6bf835ac0f5c290602a74f3c3e02160134f19f56bd0a3b33ab4", "bytes": 3872 },
+    { "path": "index.html", "sha256": "07b37da09af1cce9a1df8ba9ccafd86b7aa1fd1f5937cdd50ad4fd60d6fb6f0c", "bytes": 3920 },
     { "path": "lessons/0001-uart-is-what.html", "sha256": "dc0485d734435143371f1ff842120ccb501c695c10c642c506ff4b004ff73c83", "bytes": 7818 },
     { "path": "lessons/0002-character-to-frame.html", "sha256": "5bef0b04f09965214636c1273c1ba6d872426ababcf4845c3e9660ff5cf6287e", "bytes": 8670 },
     { "path": "lessons/0003-baud-and-sampling.html", "sha256": "03da90f3ee7d6602bb88edb65ce8ddd144fa2481fb4f17bf7682b2626c79a0fe", "bytes": 9439 },
-    { "path": "lessons/0004-first-transmit.html", "sha256": "983a190a0e566ee73dcd46baafb24c8c5ec043694326d68880f7ff96d258c2d2", "bytes": 11480 },
+    { "path": "lessons/0004-first-transmit.html", "sha256": "6fbaed4bd88141c6a0f4305cb57060e32d12f0e6391a55011f5636577b4ad8a3", "bytes": 11498 },
+    { "path": "lessons/0005-polling-receive.html", "sha256": "d1550b1d55e96c4c483ba0c29c5778d1c4c4bba00f22b581884e01b0732ec698", "bytes": 12208 },
     { "path": "reference/uart-beginner-quick-reference.html", "sha256": "63d8a89eeeec7bec53202e9767f63c0fe928cf2938a343647862a8567185dbbc", "bytes": 3002 }
   ]
 }

@@ -63,6 +63,14 @@ sources:
     locator: HAL UART driver chapter
     accessedAt: 2026-09-27
     supports: [STM32F1 HAL UART 的轮询、中断和 DMA 接口]
+  - id: st-stm32f1-hal-uart-driver
+    type: official
+    title: STM32F1 HAL UART driver source
+    organization: STMicroelectronics
+    url: https://github.com/STMicroelectronics/stm32f1xx-hal-driver/blob/master/Src/stm32f1xx_hal_uart.c
+    locator: HAL_UART_Receive and polling mode documentation
+    accessedAt: 2026-09-27
+    supports: [HAL_UART_Receive 的阻塞、长度、超时、状态与 RXNE 读取路径]
   - id: st-an6363-uart-clock
     type: official
     title: AN6363 — Introduction to clock requirements and calibration for STM32 MCUs
@@ -103,9 +111,9 @@ units:
   - id: uart-u05-polling-receive
     title: 轮询接收、超时与回环
     objective: 能使用 HAL 轮询接口完成单字节和定长接收，观察阻塞与超时，并实现 echo 回环。
-    status: planned
+    status: available
     knowledge: [knowledge-stm32f103-usart-v1]
-    exercises: []
+    exercises: [uart-ex-polling-echo-v1, uart-ex-fixed-length-timeout-v1]
     acceptance: [能解释阻塞和超时参数, 能完成轮询回环, 能记录无输入与输入不足时的行为]
   - id: uart-u06-stream-string-buffer
     title: 字节流、字符串与缓冲区
@@ -150,4 +158,4 @@ units:
 
 建议按目录顺序学习：先阅读讲解并完成课内练习，再用入门速查表复习术语和公式。课程中的稳定知识会同时关联到可独立查阅的 Knowledge。
 
-当前版本完成前三课，其余课次只在目录中说明路线，不创建没有正文的空 HTML 页面。整门课程仍处于审核状态。
+当前版本完成前五课，其余课次只在目录中说明路线，不创建没有正文的空 HTML 页面。整门课程仍处于审核状态。

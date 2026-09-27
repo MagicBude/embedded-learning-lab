@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>第 5 课：轮询接收、超时与回环</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body>
+<header class="topbar"><div class="shell"><a class="brand" href="../index.html">UART Foundations</a><nav class="toplinks"><a href="../index.html">课程目录</a><a href="../reference/uart-beginner-quick-reference.html">入门速查</a><a href="../../../../courses/uart-foundations/">课程介绍</a></nav></div></header>
+<main class="shell layout">
+<article class="reading">
+  <p class="eyebrow">Lesson 05 · 先理解阻塞，再谈非阻塞</p>
+  <h1>轮询接收、超时与回环</h1>
+  <p class="lead"><strong>本课目标：</strong>能用 <code>HAL_UART_Receive()</code> 完成单字节 echo 和定长接收，解释调用为什么阻塞、长度和超时分别约束什么，并用终端证据区分成功、超时与配置错误。</p>
+
+  <h2 id="problem">1. 发送容易，接收多了一个未知</h2>
+  <p>上一课的程序知道自己要发送多少字节，也知道什么时候开始发送。接收端面对的情况不同：数据可能现在到达，也可能几秒后到达；可能只有一个字节，也可能是一串内容。</p>
+  <p>轮询接收选择一种最直接的处理方式：程序停在接收函数中，不断检查 UART 是否收到了下一个字节，直到得到指定数量的数据、发生错误或超过等待时间。</p>
+  <pre aria-label="轮询接收控制流">调用 HAL_UART_Receive(Size = 1, Timeout = 1000)
+             │
+             ├─ 1 s 内收到 1 byte ─→ HAL_OK ─→ 处理该 byte
+             ├─ 1 s 内没有收齐    ─→ HAL_TIMEOUT
+             └─ 接收过程发生错误  ─→ HAL_ERROR</pre>
+  <blockquote><strong>阻塞的含义：</strong>函数没有返回以前，调用它的这条执行路径不能继续做后面的工作。UART 外设仍在运行，但主循环正在等待。</blockquote>
+
+  <h2 id="parameters">2. 四个参数分别承诺什么</h2>
+  <pre><code>HAL_StatusTypeDef HAL_UART_Receive(
+    UART_HandleTypeDef *huart,
+    uint8_t *pData,
+    uint16_t Size,
+    uint32_t Timeout);</code></pre>
+  <table><thead><tr><th>参数</th><th>本课含义</th><th>常见误解</th></tr></thead><tbody>
+    <tr><td><code>huart</code></td><td>使用哪个 UART 实例及其当前状态</td><td>不是串口号字符串</td></tr>
+    <tr><td><code>pData</code></td><td>接收数据要写入的内存起始地址</td><td>函数不会替你创建或扩容缓冲区</td></tr>
+    <tr><td><code>Size</code></td><td>本次必须接收的数据元素数量</td><td>不是缓冲区最大容量，也不是“不超过这个数”</td></tr>
+    <tr><td><code>Timeout</code></td><td>阻塞过程允许等待的时间</td><td>不是消息结束符，也不会自动推断实际消息长度</td></tr>
+  </tbody></table>
+  <p>在常用 8N1、无校验配置下，一个数据元素就是一个字节。本课程暂时只讨论这种配置；启用 9 bit 或校验后，数据宽度规则需要重新核对 HAL 驱动说明。</p>
+
+  <h2 id="echo">3. 第一个接收实验：单字节 echo</h2>
+  <p>echo（回显）是收到什么就发回什么。它同时验证电脑→STM32 的 RX 路径和 STM32→电脑的 TX 路径。</p>
+  <pre><code>/* USER CODE BEGIN 2 */
+uint8_t rx_byte = 0U;
+/* USER CODE END 2 */
+
+while (1)
+{
+  HAL_StatusTypeDef status = HAL_UART_Receive(
+      &amp;huart1,
+      &amp;rx_byte,
+      1U,
+      1000U);
+
+  if (status == HAL_OK)
+  {
+    if (HAL_UART_Transmit(&amp;huart1, &amp;rx_byte, 1U, 100U) != HAL_OK)
+    {
+      Error_Handler();
+    }
+  }
+  else if (status == HAL_TIMEOUT)
+  {
+    /* 本轮没有在 1 s 内收到字节，回到循环继续等待。 */
+  }
+  else
+  {
+    Error_Handler();
+  }
+}</code></pre>
+  <p>终端关闭 local echo（本地回显）后发送字符 <code>A</code>。如果窗口又出现一个 <code>A</code>，它来自 STM32 回传；若本地回显没有关闭，终端自己显示一次、板子再返回一次，可能看到两个字符并误判程序重复接收。</p>
+
+  <h2 id="observe">4. 如何证明回显来自开发板</h2>
+  <ol>
+    <li>终端设置保持 115200、8N1、无流控，关闭本地回显。</li>
+    <li>分别发送 <code>A</code>、<code>7</code>、<code>?</code>，确认每次只返回相同的一个字节。</li>
+    <li>断开 STM32 TX→USB-UART RX，发送仍能到达板卡，但终端不应再看到返回内容。</li>
+    <li>恢复 TX 连线，复位板卡，再次确认回显恢复。</li>
+  </ol>
+  <div class="callout"><strong>注意终端发送方式：</strong>有些终端逐键发送，有些要点击“发送”或按 Enter 才发出文本；按 Enter 还可能追加 CR、LF 或 CRLF。观察结果前先确认工具究竟发了哪些字节。</div>
+
+  <h2 id="fixed">5. 把 Size 改为 4 会发生什么</h2>
+  <p>下面的代码只有收齐 4 个字节才整体回传：</p>
+  <pre><code>uint8_t block[4];
+
+HAL_StatusTypeDef status = HAL_UART_Receive(
+    &amp;huart1,
+    block,
+    sizeof(block),
+    3000U);
+
+if (status == HAL_OK)
+{
+  HAL_UART_Transmit(&amp;huart1, block, sizeof(block), 100U);
+}</code></pre>
+  <p>在 3 秒内发送 <code>ABCD</code>，函数收齐 4 字节后返回 <code>HAL_OK</code>。如果只发送 <code>AB</code>，函数会继续等待剩余两个字节，直到超时。</p>
+  <blockquote><strong>关键边界：</strong><code>Size = 4</code> 表示“要收齐 4 个”，不表示“最多接收 4 个”。标准 <code>HAL_UART_Receive()</code> 的返回值也不会告诉调用者超时前究竟收到了几个元素，所以不要在 <code>HAL_TIMEOUT</code> 后把整个缓冲区当作一条有效消息。</blockquote>
+
+  <h2 id="timeout">6. Timeout 是恢复机会，不是消息协议</h2>
+  <p>HAL 的轮询 API 使用超时避免程序永久卡在等待中。常见 Cube 工程以毫秒为 HAL 时间基准，因此 <code>1000U</code> 表示约 1000 ms。具体工程若更改 HAL timebase，必须重新核对时间行为。</p>
+  <table><thead><tr><th>Timeout</th><th>行为意图</th><th>风险</th></tr></thead><tbody>
+    <tr><td><code>0U</code></td><td>立即检查，不能等待</td><td>主循环若没有合适调度，会频繁空转</td></tr>
+    <tr><td>有限值</td><td>等待一段时间，超时后恢复控制权</td><td>值过大会拖慢其他任务，过小会把正常间隔判为超时</td></tr>
+    <tr><td><code>HAL_MAX_DELAY</code></td><td>近似无限等待</td><td>没有数据时主循环可能永远无法继续</td></tr>
+  </tbody></table>
+  <p>超时只能回答“这段时间内是否收齐指定数量”，不能回答“一条消息是不是已经结束”。真正的消息边界需要定长、结束符、长度字段、空闲事件或其他协议规则，后续课程再逐层建立。</p>
+
+  <h2 id="state">7. 从寄存器视角理解轮询</h2>
+  <p>STM32F103 的 USART 接收器把完成的数据放入数据寄存器，并通过 RXNE（Receive data register not empty，接收数据寄存器非空）状态提示软件。轮询接收的核心动作可以简化为：</p>
+  <pre>等待 RXNE = 1
+    ↓
+读取 DR，取走一个数据元素
+    ↓
+还没达到 Size？继续等待
+    ↓
+收齐后返回 HAL_OK</pre>
+  <p>HAL 还负责句柄状态、参数、超时和不同字长等细节。理解 RXNE→读取 DR 的路径有助于调试，但不要一边让 HAL 管理接收，一边在业务代码中随意读取 DR，否则会抢走 HAL 正在等待的数据。</p>
+
+  <h2 id="failure">8. 常见失败与恢复</h2>
+  <table><thead><tr><th>现象</th><th>可能原因</th><th>验证和恢复</th></tr></thead><tbody>
+    <tr><td>键入一个字符却没有显示</td><td>终端并未立即发送；RX/TX 接反；函数在等更多字节</td><td>使用明确的发送按钮；检查 PA10←TXD；确认 <code>Size</code></td></tr>
+    <tr><td>每个字符显示两次</td><td>终端本地回显开启，同时板卡也 echo</td><td>关闭 local echo 后重试</td></tr>
+    <tr><td>按 Enter 后多出空行或符号</td><td>终端附加 CR、LF 或 CRLF</td><td>切换十六进制观察，确认实际发送的 <code>0D</code>/<code>0A</code></td></tr>
+    <tr><td>定长接收偶尔超时</td><td>没有在超时前发送足够字节，或字符间隔过长</td><td>记录发送字节数和时间；暂时增大超时验证假设</td></tr>
+    <tr><td>主循环其他功能明显变慢</td><td>轮询接收长期阻塞</td><td>缩短超时只用于验证；下一阶段改为非阻塞设计</td></tr>
+  </tbody></table>
+
+  <section class="exercise"><h3>本课证据包</h3><ol><li>关闭本地回显后，发送三种不同字符并逐字节收到相同返回；</li><li>断开 TX 回传线后输出消失，恢复连线后输出恢复；</li><li>定长 4 字节实验中，记录“收齐成功”和“不足超时”两种结果；</li><li>写一句话说明轮询接收为什么不适合同时承担长时间等待和其他实时工作。</li></ol><details class="answer"><summary>点击显示证据判定标准</summary><p>证据必须能区分电脑自身显示与 MCU 回传，能把结果与 <code>Size</code>/<code>Timeout</code> 配置对应，并保留至少一个失败案例。只有一张“窗口里有字符”的截图不足以证明接收路径和程序语义。</p></details></section>
+
+  <h2 id="recall">9. 自测</h2>
+  <p>建议先独立作答，再逐题展开参考答案。</p>
+  <ol class="self-check">
+    <li><code>HAL_UART_Receive(..., Size = 4, ...)</code> 是“最多收 4 字节”吗？<details class="answer"><summary>点击显示第 1 题答案</summary><p>不是。标准轮询接收会等待指定数量的数据元素，收齐 4 个才正常完成；不足时继续等待，直到发生错误或超时。</p></details></li>
+    <li>为什么做 echo 实验时要关闭终端本地回显？<details class="answer"><summary>点击显示第 2 题答案</summary><p>本地回显会在电脑端直接显示键入内容，即使 STM32 没有返回任何数据也能看到字符。关闭后，重新出现的字符才更可能来自板卡回传路径。</p></details></li>
+    <li>收到 <code>HAL_TIMEOUT</code> 后，为什么不能直接把整个缓冲区当成消息？<details class="answer"><summary>点击显示第 3 题答案</summary><p>超时只说明没有在限定时间内收齐 <code>Size</code> 个元素。缓冲区可能只写入了一部分，而标准 API 没有通过返回值给出这次实际接收长度，剩余位置也可能保留旧值。</p></details></li>
+    <li>Timeout 为什么不能代替消息结束符？<details class="answer"><summary>点击显示第 4 题答案</summary><p>超时描述的是等待策略，而不是双方约定的消息结构。发送端一次正常停顿也可能触发超时；连续消息之间没有足够停顿时又无法区分。可靠边界需要明确的协议规则或受约束的空闲判定。</p></details></li>
+    <li>轮询接收内部反复等待的关键状态标志是什么？读取数据寄存器有什么效果？<details class="answer"><summary>点击显示第 5 题答案</summary><p>关键标志是 RXNE。它表示接收数据寄存器非空；软件读取 DR 取走数据后，相应接收状态被推进，HAL 再等待下一个元素，直到达到请求数量。</p></details></li>
+  </ol>
+  <nav class="lesson-nav"><a href="0004-first-transmit.html">← 上一课</a><a href="../index.html">返回课程目录 →</a></nav>
+</article>
+<aside class="side"><strong>本课目录</strong><ol><li><a href="#problem">接收问题</a></li><li><a href="#parameters">四个参数</a></li><li><a href="#echo">单字节 echo</a></li><li><a href="#observe">证明回显</a></li><li><a href="#fixed">定长接收</a></li><li><a href="#timeout">超时边界</a></li><li><a href="#state">RXNE 与 DR</a></li><li><a href="#failure">失败恢复</a></li><li><a href="#recall">自测</a></li></ol></aside>
+</main>
+<footer class="footer"><div class="shell">第 5 课 · 内容依据 STM32F1 HAL UART 驱动、UM1850 与 RM0008 · 审核中</div></footer>
+</body>
+</html>
