@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1760 920" role="img" aria-labelledby="title desc">
+<title id="title">Embedded Learning Lab 长期学习路线</title>
+<desc id="desc">路线从准备与工具、嵌入式 C、硬件与 MCU、外设与通信、小型系统闭环组成共同主干，随后分为 MCU 与 RTOS、Embedded Linux 应用、BSP 与 Linux 驱动、网络与 IoT 四条泳道；工程测试调试和系统设计可靠性贯穿全程。所有学习节点当前均为规划状态。</desc>
+<defs>
+<marker id="arrow-neutral" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#7890aa"/></marker>
+<marker id="arrow-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#65bdb6"/></marker>
+<marker id="arrow-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#79b98c"/></marker>
+<marker id="arrow-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#a58ac7"/></marker>
+<marker id="arrow-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#e4a85f"/></marker>
+<style>
+.bg{fill:#fff}.heading{font:600 24px system-ui,"Microsoft YaHei",sans-serif;fill:#243b53}.sub{font:400 13px system-ui,"Microsoft YaHei",sans-serif;fill:#627d98}.node{stroke-width:1.6}.foundation{fill:#e4f2ff;stroke:#75b4e2}.a{fill:#e0f7f5;stroke:#65bdb6}.b{fill:#e6f6ea;stroke:#79b98c}.c{fill:#f1eafa;stroke:#a58ac7}.d{fill:#fff3df;stroke:#e4a85f}.gate{fill:#eef2f7;stroke:#829ab1;stroke-width:1.6}.band{fill:#edf2f7;stroke:#9fb3c8;stroke-width:1.3}.t{font:600 14px system-ui,"Microsoft YaHei",sans-serif;text-anchor:middle}.ts{font:400 12px system-ui,"Microsoft YaHei",sans-serif;text-anchor:middle}.tf{fill:#075b9c}.ta{fill:#087f8c}.tb{fill:#2f855a}.tc{fill:#6b46a1}.td{fill:#b45309}.tn{fill:#334e68}.lane{font:600 14px system-ui,"Microsoft YaHei",sans-serif;text-anchor:end}.edge{fill:none;stroke:#7890aa;stroke-width:2;marker-end:url(#arrow-neutral)}.ea{fill:none;stroke:#65bdb6;stroke-width:2;marker-end:url(#arrow-a)}.eb{fill:none;stroke:#79b98c;stroke-width:2;marker-end:url(#arrow-b)}.ec{fill:none;stroke:#a58ac7;stroke-width:2;marker-end:url(#arrow-c)}.ed{fill:none;stroke:#e4a85f;stroke-width:2;marker-end:url(#arrow-d)}.dep{fill:none;stroke:#829ab1;stroke-width:1.5;stroke-dasharray:7 6;marker-end:url(#arrow-neutral)}.dep-label{font:400 11px system-ui,"Microsoft YaHei",sans-serif;fill:#486581;text-anchor:start}.bandtext{font:600 14px system-ui,"Microsoft YaHei",sans-serif;fill:#334e68;text-anchor:middle}
+@media(prefers-color-scheme:dark){.bg{fill:#111827}.heading{fill:#e5edf5}.sub{fill:#aabccc}.foundation{fill:#153b5c;stroke:#59a1d1}.a{fill:#123f3d;stroke:#54a9a2}.b{fill:#173f2c;stroke:#6ead80}.c{fill:#35264e;stroke:#9577bc}.d{fill:#4b3218;stroke:#d6974c}.gate,.band{fill:#243447;stroke:#6f879d}.tf{fill:#a8d8ff}.ta{fill:#9be2dc}.tb{fill:#a8dfb5}.tc{fill:#d4b9ef}.td{fill:#ffd099}.tn,.bandtext{fill:#e2e8f0}.lane{filter:none}.edge,.dep{stroke:#91a4ba}.dep-label{fill:#b9c8d5}}
+</style>
+</defs>
+<rect class="bg" width="1760" height="920"/>
+<text class="heading" x="30" y="48">Embedded Learning Lab 长期学习路线</text>
+<text class="sub" x="30" y="76">所有学习节点当前均为 planned；路线完整规划，内容按真实进展开放</text>
+
+<path class="edge" d="M220 151H255"/><path class="edge" d="M460 151H495"/><path class="edge" d="M700 151H735"/><path class="edge" d="M955 151H990"/><path class="edge" d="M1195 151H1245"/>
+<path class="edge" d="M1317.5 191V205H1165V266H1200"/>
+<path class="edge" d="M1317.5 191V205H1165V386H1200"/>
+<path class="edge" d="M1317.5 191V205H1165V506H1200"/>
+<path class="edge" d="M1317.5 191V205H1165V626H1200"/>
+<path class="ea" d="M1420 266H1490"/><path class="eb" d="M1420 386H1490"/><path class="ec" d="M1420 506H1490"/><path class="ed" d="M1420 626H1490"/>
+
+<rect class="node foundation" x="30" y="110" width="190" height="82" rx="15"/><text class="t tf" x="125" y="136">P0　准备与工具</text><text class="ts tf" x="125" y="158">可复现开发环境</text><text class="ts tf" x="125" y="179">[planned]</text>
+<rect class="node foundation" x="255" y="110" width="205" height="82" rx="15"/><text class="t tf" x="357.5" y="136">F1　嵌入式 C</text><text class="ts tf" x="357.5" y="158">缓冲区 · 解析器 · 状态机</text><text class="ts tf" x="357.5" y="179">[planned]</text>
+<rect class="node foundation" x="495" y="110" width="205" height="82" rx="15"/><text class="t tf" x="597.5" y="136">F2　硬件与 MCU</text><text class="ts tf" x="597.5" y="158">上电到 main · GPIO</text><text class="ts tf" x="597.5" y="179">[planned]</text>
+<rect class="node foundation" x="735" y="110" width="220" height="82" rx="15"/><text class="t tf" x="845" y="136">F3　外设与通信</text><text class="ts tf" x="845" y="158">UART / I²C / SPI · 调试证据</text><text class="ts tf" x="845" y="179">[planned]</text>
+<rect class="node foundation" x="990" y="110" width="205" height="82" rx="15"/><text class="t tf" x="1092.5" y="136">F4　系统闭环</text><text class="ts tf" x="1092.5" y="158">裸机数据采集终端</text><text class="ts tf" x="1092.5" y="179">[planned]</text>
+<path class="gate" d="M1317.5 111 1390 151 1317.5 191 1245 151z"/><text class="t tn" x="1317.5" y="155">选择目标方向</text>
+
+<text class="lane ta" x="1160" y="271">A · MCU / RTOS 固件</text>
+<text class="lane tb" x="1160" y="391">B · Embedded Linux 应用</text>
+<text class="lane tc" x="1160" y="511">C · BSP / 驱动 / 系统构建</text>
+<text class="lane td" x="1160" y="631">D · 网络与 IoT</text>
+
+<rect class="node a" x="1200" y="225" width="220" height="82" rx="15"/><text class="t ta" x="1310" y="251">A1　RTOS 并发基础</text><text class="ts ta" x="1310" y="273">RTOS 重构</text><text class="ts ta" x="1310" y="294">[planned]</text>
+<rect class="node a" x="1490" y="225" width="220" height="82" rx="15"/><text class="t ta" x="1600" y="251">A2　可靠固件</text><text class="ts ta" x="1600" y="273">升级 · 恢复 · 低功耗</text><text class="ts ta" x="1600" y="294">[planned]</text>
+<rect class="node b" x="1200" y="345" width="220" height="82" rx="15"/><text class="t tb" x="1310" y="371">B1　Linux 系统编程</text><text class="ts tb" x="1310" y="393">串口网关</text><text class="ts tb" x="1310" y="414">[planned]</text>
+<rect class="node b" x="1490" y="345" width="220" height="82" rx="15"/><text class="t tb" x="1600" y="371">B2　Linux 应用工程</text><text class="ts tb" x="1600" y="393">可部署边缘服务</text><text class="ts tb" x="1600" y="414">[planned]</text>
+<rect class="node c" x="1200" y="465" width="220" height="82" rx="15"/><text class="t tc" x="1310" y="491">C1　启动链与系统构建</text><text class="ts tc" x="1310" y="513">可启动镜像</text><text class="ts tc" x="1310" y="534">[planned]</text>
+<rect class="node c" x="1490" y="465" width="220" height="82" rx="15"/><text class="t tc" x="1600" y="491">C2　BSP 与 Linux 驱动</text><text class="ts tc" x="1600" y="513">驱动 + 用户态验证</text><text class="ts tc" x="1600" y="534">[planned]</text>
+<rect class="node d" x="1200" y="585" width="220" height="82" rx="15"/><text class="t td" x="1310" y="611">D1　网络与设备连接</text><text class="ts td" x="1310" y="633">抓包验证的遥测链路</text><text class="ts td" x="1310" y="654">[planned]</text>
+<rect class="node d" x="1490" y="585" width="220" height="82" rx="15"/><text class="t td" x="1600" y="611">D2　IoT 系统工程</text><text class="ts td" x="1600" y="633">安全可升级闭环</text><text class="ts td" x="1600" y="654">[planned]</text>
+
+<path class="dep" d="M1310 427V465"/><rect class="bg" x="1322" y="438" width="154" height="18"/><text class="dep-label" x="1326" y="451">复用 Linux 与交叉编译基础</text>
+
+<rect class="band" x="30" y="730" width="1680" height="52" rx="10"/><text class="bandtext" x="870" y="761">贯穿能力 · 工程测试与调试　版本控制 · 构建 · 测试 · 日志 · 测量 · 故障注入 · 调试器与仪器</text>
+<rect class="band" x="30" y="800" width="1680" height="52" rx="10"/><text class="bandtext" x="870" y="831">贯穿能力 · 系统设计与可靠性　边界 · 状态 · 时序 · 资源 · 错误处理 · 升级 · 安全 · 可维护性</text>
+</svg>
