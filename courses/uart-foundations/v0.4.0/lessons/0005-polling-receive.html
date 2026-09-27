@@ -131,7 +131,7 @@ if (status == HAL_OK)
     <li>Timeout 为什么不能代替消息结束符？<details class="answer"><summary>点击显示第 4 题答案</summary><p>超时描述的是等待策略，而不是双方约定的消息结构。发送端一次正常停顿也可能触发超时；连续消息之间没有足够停顿时又无法区分。可靠边界需要明确的协议规则或受约束的空闲判定。</p></details></li>
     <li>轮询接收内部反复等待的关键状态标志是什么？读取数据寄存器有什么效果？<details class="answer"><summary>点击显示第 5 题答案</summary><p>关键标志是 RXNE。它表示接收数据寄存器非空；软件读取 DR 取走数据后，相应接收状态被推进，HAL 再等待下一个元素，直到达到请求数量。</p></details></li>
   </ol>
-  <nav class="lesson-nav"><a href="0004-first-transmit.html">← 上一课</a><a href="../index.html">返回课程目录 →</a></nav>
+  <nav class="lesson-nav"><a href="0004-first-transmit.html">← 上一课</a><a href="0006-stream-string-buffer.html">下一课：字节流与缓冲区 →</a></nav>
 </article>
 <aside class="side"><strong>本课目录</strong><ol><li><a href="#problem">接收问题</a></li><li><a href="#parameters">四个参数</a></li><li><a href="#echo">单字节 echo</a></li><li><a href="#observe">证明回显</a></li><li><a href="#fixed">定长接收</a></li><li><a href="#timeout">超时边界</a></li><li><a href="#state">RXNE 与 DR</a></li><li><a href="#failure">失败恢复</a></li><li><a href="#recall">自测</a></li></ol></aside>
 </main>

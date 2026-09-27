@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>第 6 课：字节流、字符串与缓冲区</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body>
+<header class="topbar"><div class="shell"><a class="brand" href="../index.html">UART Foundations</a><nav class="toplinks"><a href="../index.html">课程目录</a><a href="../reference/uart-beginner-quick-reference.html">入门速查</a><a href="../../../../courses/uart-foundations/">课程介绍</a></nav></div></header>
+<main class="shell layout">
+<article class="reading">
+  <p class="eyebrow">Lesson 06 · 先知道内存里有什么，再决定怎样解释</p>
+  <h1>字节流、字符串与缓冲区</h1>
+  <p class="lead"><strong>本课目标：</strong>面对一块 UART 接收内存，能分别指出容量、有效长度和字符串终止符；能安全处理文本和包含 <code>0x00</code> 的二进制数据，并通过实验识别旧数据、截断和越界风险。</p>
+
+  <h2 id="problem">1. 收到 4 字节，不等于得到一个字符串</h2>
+  <p>上一课把四个字节接收到数组中。假设电脑发送 <code>OK\r\n</code>，内存里可能依次出现 <code>4F 4B 0D 0A</code>。UART 只负责搬来这四个字节，不会自动在后面添加 C 字符串需要的空字符 <code>\0</code>。</p>
+  <pre aria-label="字节流进入缓冲区后的三层含义">线路按时间到达：  4F   4B   0D   0A
+                    ↓    ↓    ↓    ↓
+缓冲区中的字节：  [4F] [4B] [0D] [0A] [??] [??] [??] [??]
+                    └──── 有效长度 used = 4 ────┘
+                    └──────── 容量 capacity = 8 ─────────┘
+
+若要作为 C 字符串：必须另有一个 [00] 作为终止符</pre>
+  <blockquote><strong>先分清三件事：</strong>容量回答“最多能放多少”；有效长度回答“现在有多少字节有意义”；终止符回答“字符串在哪里结束”。它们不是同一个数，也不能互相推断。</blockquote>
+
+  <h2 id="model">2. 缓冲区不是一个神奇的指针</h2>
+  <pre><code>uint8_t rx[8];
+size_t capacity = sizeof(rx);  /* 8：总共有 8 个元素 */
+size_t used = 4U;              /* 4：当前只有前 4 个有效 */</code></pre>
+  <table><thead><tr><th>信息</th><th>例子</th><th>如果丢失</th></tr></thead><tbody>
+    <tr><td>起始地址</td><td><code>rx</code> 或 <code>&amp;rx[0]</code></td><td>不知道从哪里读写</td></tr>
+    <tr><td>容量</td><td><code>sizeof(rx) == 8</code></td><td>不知道何时必须停止写入</td></tr>
+    <tr><td>有效长度</td><td><code>used == 4</code></td><td>会把未写入或上一次残留的数据当成新数据</td></tr>
+  </tbody></table>
+  <p>数组的可用下标是 <code>0</code> 到 <code>capacity - 1</code>。因此 <code>rx[8]</code> 不是“第 8 个元素”，而是第 9 个位置，已经越界。C 标准允许形成指向数组尾后一位的指针用于比较，但不能解引用它。</p>
+
+  <section class="exercise"><h3>就地练习：给每个位置贴标签</h3><p>对 <code>uint8_t rx[8]</code> 且 <code>used = 3</code>，先独立回答：最后一个有效下标、最后一个可写下标和尾后一位下标分别是什么？</p><details class="answer"><summary>点击显示练习答案</summary><p>最后一个有效下标是 <code>used - 1 = 2</code>；最后一个可写下标是 <code>capacity - 1 = 7</code>；尾后一位下标是 <code>8</code>，不能读写。注意“当前有效”和“物理上仍可写”是两种边界。</p></details></section>
+
+  <h2 id="string">3. C 字符串是带终止规则的字符序列</h2>
+  <p>C 字符串是以第一个空字符结束的连续字符序列。空字符的值为零，通常写作 <code>'\0'</code>；它不是字符 <code>'0'</code>，后者的 ASCII 编码是 <code>0x30</code>。</p>
+  <pre><code>char text[5] = {'O', 'K', '\r', '\n', '\0'};
+/* 内存：4F 4B 0D 0A 00 */
+
+uint8_t bytes[5] = {0x4F, 0x4B, 0x00, 0x0D, 0x0A};
+/* 有效二进制数据共 5 byte，但按字符串看会在第 3 byte 停止 */</code></pre>
+  <p><code>strlen()</code> 计算的是第一个 <code>\0</code> 之前的字节数，不包含终止符。它并不知道数组容量；如果输入范围内根本没有 <code>\0</code>，函数会继续向后读取，程序行为不再可靠。</p>
+  <table><thead><tr><th>对象</th><th>能否包含 <code>0x00</code></th><th>长度从哪里来</th><th>适合的接口</th></tr></thead><tbody>
+    <tr><td>任意字节序列</td><td>可以，零也是数据</td><td>显式的 <code>used</code></td><td><code>memcmp</code>、带长度的解析函数、UART 发送长度</td></tr>
+    <tr><td>C 字符串</td><td><code>0x00</code> 表示结束</td><td>第一个 <code>\0</code> 的位置</td><td><code>strlen</code>、<code>printf("%s", ...)</code> 等字符串接口</td></tr>
+  </tbody></table>
+  <div class="callout"><strong>容易混淆：</strong><code>NULL</code> 通常表示空指针；<code>'\0'</code> 是数值为零的字符。它们不是一回事。串口传来的 <code>0x00</code> 也不会神奇地变成“没有数据”。</div>
+
+  <h2 id="text-receive">4. 已知长度文本：为终止符预留一格</h2>
+  <p>假设协议明确规定每次恰好接收 4 个文本字节，并希望之后使用字符串函数，那么容量必须至少为 5：</p>
+  <pre><code>char text[5];
+const size_t payload_length = 4U;
+
+HAL_StatusTypeDef status = HAL_UART_Receive(
+    &amp;huart1,
+    (uint8_t *)text,
+    payload_length,
+    3000U);
+
+if (status == HAL_OK)
+{
+  text[payload_length] = '\0';  /* 下标 4 在容量 5 以内 */
+  HAL_UART_Transmit(
+      &amp;huart1,
+      (uint8_t *)text,
+      payload_length,           /* 回传真实数据，不发送 \0 */
+      100U);
+}</code></pre>
+  <p>这里的安全关系是 <code>payload_length &lt; sizeof(text)</code>。如果数组只有 4 个元素，收满后再写 <code>text[4] = '\0'</code> 就会越界。终止符占用真实空间，不能靠注释或类型转换创造出来。</p>
+  <p>这段代码只适用于“长度已经由协议确定”的教学案例。它没有解决不定长输入；结束符、长度字段和 IDLE 等消息边界会在第 10 课比较。</p>
+
+  <h2 id="binary">5. 二进制数据必须携带显式长度</h2>
+  <p>假设一个四字节传感器包是 <code>01 00 7F A5</code>。中间的 <code>00</code> 是合法数据。如果使用 <code>strlen((char *)packet)</code>，得到的结果可能是 1，而不是 4。</p>
+  <pre><code>uint8_t packet[4];
+
+if (HAL_UART_Receive(&amp;huart1, packet, sizeof(packet), 3000U) == HAL_OK)
+{
+  const size_t used = sizeof(packet);
+
+  for (size_t i = 0U; i &lt; used; ++i)
+  {
+    process_byte(packet[i]);
+  }
+
+  HAL_UART_Transmit(&amp;huart1, packet, used, 100U);
+}</code></pre>
+  <p>循环只使用 <code>i &lt; used</code> 的位置。它不查找 <code>\0</code>，所以 <code>0x00</code>、<code>0xFF</code> 和其他不可打印值都能原样处理。终端的文本视图可能看不见这些值，验证时应切换到十六进制显示。</p>
+
+  <section class="exercise"><h3>对照实验：同一批字节，两种解释</h3><ol><li>让电脑以十六进制发送 <code>41 00 42 43</code>。</li><li>STM32 固定接收 4 byte，并原样回传 4 byte。</li><li>终端分别用文本视图和十六进制视图观察。</li><li>在纸上写出：显式长度是多少；如果错误调用 <code>strlen</code>，字符串长度会是多少。</li></ol><details class="answer"><summary>点击显示实验预期</summary><p>回传的四字节应仍为 <code>41 00 42 43</code>；文本视图可能只显示 <code>A</code> 或以其他方式处理零值，十六进制视图才是此实验的可靠证据。显式长度为 4；把该数组当作已终止字符串时，<code>strlen</code> 会在第一个 <code>00</code> 处停止并返回 1。前提是数组访问本身有效。</p></details></section>
+
+  <h2 id="stale">6. 旧数据为什么会“混进来”</h2>
+  <p>缓冲区不会在每次接收前自动清空。假设上一次写入 <code>ABCDE</code>，下一次只写入 <code>XY</code>：</p>
+  <pre>上一次： [A] [B] [C] [D] [E] [00] [??] [??]   used = 5
+下一次： [X] [Y] [C] [D] [E] [00] [??] [??]   used = 2
+                  └────── 这些仍在内存，但不再有效 ──────┘</pre>
+  <p>如果程序始终只处理前 <code>used</code> 个字节，旧内容没有危害。相反，如果错误地发送整个 <code>sizeof(buffer)</code>，或者忘记更新字符串终止符，就会把残留内容一并输出。</p>
+  <pre><code>/* 错误：把容量当成有效长度 */
+HAL_UART_Transmit(&amp;huart1, buffer, sizeof(buffer), 100U);
+
+/* 正确：只发送本次确认有效的字节 */
+HAL_UART_Transmit(&amp;huart1, buffer, used, 100U);</code></pre>
+  <blockquote><strong>清零不是长度管理的替代品：</strong><code>memset(buffer, 0, sizeof(buffer))</code> 有时便于调试或满足安全擦除要求，但不能证明本次收到了多少数据。可靠程序仍应维护 <code>used</code>。</blockquote>
+
+  <h2 id="sizeof">7. 数组传给函数后，sizeof 不再代表原容量</h2>
+  <pre><code>void dump_bytes(const uint8_t *data, size_t length)
+{
+  /* 此处 sizeof(data) 是指针自身大小，不是调用者数组容量。 */
+  for (size_t i = 0U; i &lt; length; ++i)
+  {
+    print_hex(data[i]);
+  }
+}
+
+uint8_t rx[8];
+dump_bytes(rx, used);</code></pre>
+  <p>在调用处，<code>sizeof(rx)</code> 能得到整个数组大小；进入普通函数参数后，<code>data</code> 是指针。函数若需要容量和有效长度，就必须把它们显式传入，或封装进结构体，不能指望从指针恢复。</p>
+
+  <h2 id="failure">8. 四种错误，四种证据</h2>
+  <table><thead><tr><th>错误</th><th>可观察现象</th><th>定位方法</th></tr></thead><tbody>
+    <tr><td>容量当长度</td><td>短消息后跟着上次内容或无意义字节</td><td>记录 <code>capacity</code>、<code>used</code> 和实际发送长度</td></tr>
+    <tr><td>二进制当字符串</td><td>遇到 <code>00</code> 提前停止</td><td>使用十六进制视图，对比显式长度</td></tr>
+    <tr><td>未终止数组交给字符串函数</td><td>输出越过数组、结果随机或程序异常</td><td>检查容量是否给 <code>\0</code> 留位置；不要依赖偶然的零值</td></tr>
+    <tr><td>写入尾后一位</td><td>邻近变量被破坏，问题可能延后出现</td><td>审查所有下标是否满足 <code>index &lt; capacity</code></td></tr>
+  </tbody></table>
+  <p>越界是未定义行为，不能承诺每次都立刻崩溃。一次“看起来正常”的运行不是安全证据；边界关系、静态分析、编译器诊断和受控测试更可信。</p>
+
+  <section class="exercise"><h3>本课证据包</h3><ol><li>画出容量为 8、有效长度为 3 的缓冲区，并标明最后有效、最后可写和尾后一位；</li><li>完成 <code>41 00 42 43</code> 的二进制回传，保存十六进制收发证据；</li><li>用两轮不同长度的数据复现旧数据仍留在数组中，并证明按 <code>used</code> 处理不会泄漏旧内容；</li><li>修正一个“数组刚好装满后再追加 <code>\0</code>”的越界示例。</li></ol><details class="answer"><summary>点击显示证据判定标准</summary><p>证据应同时写明数组容量、本次有效长度、每个字节的十六进制值和代码实际使用的长度。只展示终端文字不足以证明中间的 <code>00</code> 被正确保留；只把数组全部清零也不能代替有效长度记录。</p></details></section>
+
+  <h2 id="recall">9. 自测</h2>
+  <p>建议先独立作答，再逐题展开参考答案。</p>
+  <ol class="self-check">
+    <li><code>uint8_t rx[8]</code> 的容量是 8，是否表示每次 8 个元素都有效？<details class="answer"><summary>点击显示第 1 题答案</summary><p>不是。容量只描述最多可容纳 8 个元素；有效长度必须由本次接收结果或协议规则另外记录。例如 <code>used = 3</code> 时，只有下标 0、1、2 属于本次有效数据。</p></details></li>
+    <li>空字符 <code>'\0'</code>、字符 <code>'0'</code> 和空指针 <code>NULL</code> 有什么区别？<details class="answer"><summary>点击显示第 2 题答案</summary><p><code>'\0'</code> 是值为零的字符，用于结束 C 字符串；<code>'0'</code> 是可显示数字字符，ASCII 值为 <code>0x30</code>；<code>NULL</code> 表示空指针常量，不是缓冲区中的字符。</p></details></li>
+    <li>为什么 <code>uint8_t packet[] = {0x01, 0x00, 0x02}</code> 不能靠 <code>strlen</code> 得到二进制长度？<details class="answer"><summary>点击显示第 3 题答案</summary><p><code>strlen</code> 按字符串规则在第一个零值处停止，会把中间合法的 <code>0x00</code> 当作结束。二进制数据必须携带显式长度；本例长度是 3。</p></details></li>
+    <li>数组容量为 4，接收 4 个字符后还能写 <code>buffer[4] = '\0'</code> 吗？<details class="answer"><summary>点击显示第 4 题答案</summary><p>不能。容量 4 的有效下标只有 0 到 3；下标 4 是尾后一位。若要保存 4 个字符并形成字符串，数组容量至少为 5。</p></details></li>
+    <li>为什么每次接收前把整个数组清零仍不能替代 <code>used</code>？<details class="answer"><summary>点击显示第 5 题答案</summary><p>清零只改变未写位置的值，并不记录本次究竟收到了多少字节；合法二进制数据本身也可能包含零。解析和发送仍需要明确的有效长度。</p></details></li>
+    <li>函数收到 <code>uint8_t *data</code> 后，为什么不能用 <code>sizeof(data)</code> 得到调用者数组容量？<details class="answer"><summary>点击显示第 6 题答案</summary><p>数组作为普通函数实参时会传递首元素地址，形参 <code>data</code> 是指针；<code>sizeof(data)</code> 得到的是指针对象自身大小。容量和有效长度需要显式传入。</p></details></li>
+  </ol>
+  <nav class="lesson-nav"><a href="0005-polling-receive.html">← 上一课</a><a href="../index.html">返回课程目录 →</a></nav>
+</article>
+<aside class="side"><strong>本课目录</strong><ol><li><a href="#problem">问题起点</a></li><li><a href="#model">缓冲区模型</a></li><li><a href="#string">C 字符串</a></li><li><a href="#text-receive">安全文本接收</a></li><li><a href="#binary">二进制数据</a></li><li><a href="#stale">旧数据</a></li><li><a href="#sizeof">sizeof 边界</a></li><li><a href="#failure">错误证据</a></li><li><a href="#recall">自测</a></li></ol></aside>
+</main>
+<footer class="footer"><div class="shell">第 6 课 · 内容依据 WG14 N1570、RFC 20 与 STM32F1 HAL UART 驱动 · 审核中</div></footer>
+</body>
+</html>

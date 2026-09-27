@@ -118,9 +118,9 @@ units:
   - id: uart-u06-stream-string-buffer
     title: 字节流、字符串与缓冲区
     objective: 能区分容量、有效长度、字符串终止符和二进制数据，并安全处理接收缓冲区。
-    status: planned
+    status: available
     knowledge: [knowledge-data-and-byte-stream-v1, knowledge-c-buffer-model-v1]
-    exercises: []
+    exercises: [uart-ex-binary-zero-byte-v1, uart-ex-stale-buffer-v1]
     acceptance: [能避免越界与错误字符串解释, 能用长度处理包含零值的二进制数据]
   - id: uart-u07-interrupt-receive
     title: 中断实现非阻塞接收
@@ -158,4 +158,4 @@ units:
 
 建议按目录顺序学习：先阅读讲解并完成课内练习，再用入门速查表复习术语和公式。课程中的稳定知识会同时关联到可独立查阅的 Knowledge。
 
-当前版本完成前五课，其余课次只在目录中说明路线，不创建没有正文的空 HTML 页面。整门课程仍处于审核状态。
+当前版本完成前六课，其余课次只在目录中说明路线，不创建没有正文的空 HTML 页面。整门课程仍处于审核状态。
