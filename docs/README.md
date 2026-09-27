@@ -25,6 +25,7 @@
 - `course-package-protocol.md`：生成课程的清单、版本化产物、接入和审核规则；
 - `learning-roadmap.md`：完整学习主干、目标分支、阶段产出和验收；
 - `first-release-scope.md`：UART 第一版页面、内容、功能、非目标和验收；
+- `design-system.md`：视觉语言、设计令牌、页面模板、核心组件和 UI 验收；
 - `information-architecture.md`：站点栏目、导航、页面结构和内容发现方式。
 
 ### `architecture/`

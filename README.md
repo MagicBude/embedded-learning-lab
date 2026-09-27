@@ -8,7 +8,7 @@ Embedded Learning Lab（嵌入式学习实验室）是一个面向嵌入式系�
 
 ## 当前阶段
 
-项目处于 **Foundation / Planning** 阶段，核心产品、内容和技术方向已经确认，正在完成正式文档合并与规划门槛检查。
+项目处于 **Foundation / Planning** 阶段，核心产品、内容和技术方向已经确认，正在补齐视觉与 UI 设计并重新检查规划门槛。
 
 当前只进行：
 
@@ -16,7 +16,8 @@ Embedded Learning Lab（嵌入式学习实验室）是一个面向嵌入式系�
 - 内容体系和信息架构设计；
 - 课程、知识、实验与项目之间的关系设计；
 - 仓库规范和协作规则建设；
-- 技术方案调研与决策记录。
+- 技术方案调研与决策记录；
+- 视觉语言、设计令牌、页面线框和组件状态设计。
 
 在规划完成并得到明确确认前，不初始化应用、不安装技术栈、不编写业务代码。
 
@@ -45,6 +46,7 @@ Embedded Learning Lab
 - [内容模型与元数据](docs/product/content-schema.md)
 - [课程产物协议](docs/product/course-package-protocol.md)
 - [长期学习路线](docs/product/learning-roadmap.md)
+- [网站设计系统](docs/product/design-system.md)
 - [信息架构草案](docs/product/information-architecture.md)
 - [仓库结构](docs/architecture/repository-structure.md)
 - [决策记录](docs/project/decisions.md)

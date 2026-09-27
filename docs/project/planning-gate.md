@@ -20,6 +20,7 @@ status: accepted
 - [x] 确认技术栈和选择理由；
 - [x] 确认部署、搜索、分析和备份的第一版策略；
 - [x] 确认基础测试、可访问性和性能要求；
+- [ ] 确认视觉基调、设计令牌、关键页面线框和核心组件状态；
 - [x] 确认开源许可证和内容许可证；
 - [x] 形成第一版可执行路线图。
 
@@ -32,6 +33,7 @@ status: accepted
 - 学习路线：`../product/learning-roadmap.md`；
 - 课程协议：`../product/course-package-protocol.md`；
 - 信息架构：`../product/information-architecture.md`；
+- 视觉与 UI 设计：`../product/design-system.md`；
 - 技术架构：`../architecture/technical-architecture.md`；
 - 质量要求：`../standards/quality-standard.md`；
 - 完整决策访谈：`planning-session.md`。
@@ -45,7 +47,7 @@ status: accepted
 
 文档自行达到完整状态，不构成自动授权。
 
-截至当前，条件 1 已满足；条件 2 尚未满足。用户确认的是“可以合并正式规划文档”，并未授权开始实现。
+截至当前，视觉与 UI 设计仍未完成，因此条件 1 尚未满足；条件 2 也尚未满足。用户确认的是“可以合并正式规划文档”，并未授权开始实现。
 
 ## 实现阶段的第一个任务
 
