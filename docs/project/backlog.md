@@ -7,6 +7,7 @@ updated: 2026-09-27
 
 ## now
 
+- 在仓库设置中启用 GitHub Pages 的 GitHub Actions 发布源，并重新运行已成功构建的部署工作流；
 - 补齐 UART 纵向切片所需的最小 Knowledge 链；
 - 建立 UART 课程 manifest、章节骨架和内容关联；
 - 实现 UART 最小互动与可重复实机验证；

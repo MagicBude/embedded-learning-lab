@@ -39,4 +39,4 @@ updated: 2026-09-27
 
 ## 阻塞项
 
-无。
+GitHub Actions 的构建任务已经成功，但首次部署因仓库尚未启用 GitHub Pages 而失败。需要由仓库管理员在 `Settings → Pages → Build and deployment → Source` 选择 **GitHub Actions**，随后重新运行部署；这不影响本地实现和下一内容工作单元。
