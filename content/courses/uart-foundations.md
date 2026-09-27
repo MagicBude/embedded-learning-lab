@@ -47,6 +47,14 @@ sources:
     locator: Sections 7, 9 and 27
     accessedAt: 2026-09-27
     supports: [STM32F103 时钟、GPIO 和 USART 外设行为]
+  - id: st-ds5319-f103x8-xb
+    type: official
+    title: STM32F103x8 and STM32F103xB datasheet
+    organization: STMicroelectronics
+    url: https://www.st.com/resource/en/datasheet/stm32f103t8.pdf
+    locator: Pinouts and pin description; alternate functions
+    accessedAt: 2026-09-27
+    supports: [STM32F103C8T6 封装引脚与 USART1 默认引脚功能]
   - id: st-um1850-hal
     type: official
     title: Description of STM32F1 HAL and low-layer drivers
@@ -88,9 +96,9 @@ units:
   - id: uart-u04-first-transmit
     title: 工具、接线与第一次发送
     objective: 能安全连接 STM32F103C8T6 与 3.3 V USB-UART，配置 USART1，并用 HAL 轮询发送获得终端证据。
-    status: planned
+    status: available
     knowledge: [knowledge-stm32f103-usart-v1]
-    exercises: []
+    exercises: [uart-ex-first-transmit-evidence-v1, uart-ex-first-transmit-debug-v1]
     acceptance: [能完成接线与配置检查, 能发送固定字节和字符串, 能保存终端输出或波形证据]
   - id: uart-u05-polling-receive
     title: 轮询接收、超时与回环

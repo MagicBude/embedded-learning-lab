@@ -61,7 +61,7 @@
     <li>为什么每一帧的起始沿可以限制误差累计范围？<details class="answer"><summary>点击显示第 4 题答案</summary><p>接收端在每个新起始位的下降沿重新获得时间参考，下一帧不必延续上一帧的采样计时误差，因此主要分析误差在单帧内部的累计。</p></details></li>
     <li>互动中的采样点没有越界，为什么仍不能证明实机可靠？<details class="answer"><summary>点击显示第 5 题答案</summary><p>互动只计算理想化相对时钟偏差，没有覆盖芯片过采样和分频实现、起始沿检测、线路边沿、噪声、电平兼容及两端各自误差。器件手册和真实波形才是实机结论的依据。</p></details></li>
   </ol>
-  <nav class="lesson-nav"><a href="0002-character-to-frame.html">← 上一课</a><a href="../index.html">返回课程目录 →</a></nav>
+  <nav class="lesson-nav"><a href="0002-character-to-frame.html">← 上一课</a><a href="0004-first-transmit.html">下一课：第一次发送 →</a></nav>
 </article>
 <aside class="side"><strong>本课目录</strong><ol><li><a href="#clock">采样时刻</a></li><li><a href="#units">三个单位</a></li><li><a href="#calculate">时间计算</a></li><li><a href="#drift">累计漂移</a></li><li><a href="#tolerance">模型边界</a></li><li><a href="#worked">完整推导</a></li><li><a href="#recall">独立练习</a></li></ol></aside>
 </main>

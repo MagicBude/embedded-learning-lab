@@ -194,6 +194,7 @@ details[open] summary {
   margin: 0.55rem 0 0;
 }
 pre {
+  max-width: 100%;
   overflow: auto;
   padding: 1rem;
   border-radius: 10px;
@@ -349,7 +350,10 @@ fieldset {
   border-bottom: 4px solid var(--primary);
 }
 table {
+  display: block;
   width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
   border-collapse: collapse;
 }
 th,

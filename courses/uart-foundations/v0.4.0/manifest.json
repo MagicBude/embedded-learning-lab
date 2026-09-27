@@ -24,7 +24,7 @@
     { "id": "uart-u01-system-boundary", "order": 1, "status": "available", "path": "lessons/0001-uart-is-what.html" },
     { "id": "uart-u02-character-to-frame", "order": 2, "status": "available", "path": "lessons/0002-character-to-frame.html" },
     { "id": "uart-u03-baud-and-sampling", "order": 3, "status": "available", "path": "lessons/0003-baud-and-sampling.html" },
-    { "id": "uart-u04-first-transmit", "order": 4, "status": "planned" },
+    { "id": "uart-u04-first-transmit", "order": 4, "status": "available", "path": "lessons/0004-first-transmit.html" },
     { "id": "uart-u05-polling-receive", "order": 5, "status": "planned" },
     { "id": "uart-u06-stream-string-buffer", "order": 6, "status": "planned" },
     { "id": "uart-u07-interrupt-receive", "order": 7, "status": "planned" },
@@ -33,7 +33,7 @@
     { "id": "uart-u10-dma-idle-messages", "order": 10, "status": "planned" }
   ],
   "references": ["reference/uart-beginner-quick-reference.html"],
-  "sources": ["rfc20-ascii", "iso-wg14-n1570", "st-rm0008-usart", "st-um1850-hal", "st-an6363-uart-clock"],
+  "sources": ["rfc20-ascii", "iso-wg14-n1570", "st-rm0008-usart", "st-ds5319-f103x8-xb", "st-um1850-hal", "st-an6363-uart-clock"],
   "progressMigration": {
     "from": "0.3.0",
     "preserveUnitIds": false,
@@ -41,12 +41,13 @@
     "reason": "原有两个基础单元重新划分为三个单一目标课次，单元 ID、学习顺序、练习位置和验收标准均发生变化。"
   },
   "files": [
-    { "path": "assets/course.css", "sha256": "2c5af55fb01121b9353714e2b6535b492539fce35e43897d6ab4b6200622fcfa", "bytes": 7136 },
+    { "path": "assets/course.css", "sha256": "081574215bfb8c71038948147280425166dd84a919682f33202291aa08155ae4", "bytes": 7212 },
     { "path": "assets/course.js", "sha256": "60a1de8dab5e1b692a52c8a5c393f2c184c4d8a599b13fc6ed06bca713378952", "bytes": 2854 },
-    { "path": "index.html", "sha256": "8cb9f8d0a0cba51d2a0e6a219ea4debbf0a3b8fcaf34eaba823cfc06bba5e8af", "bytes": 3828 },
+    { "path": "index.html", "sha256": "d43613cbd7f0d6bf835ac0f5c290602a74f3c3e02160134f19f56bd0a3b33ab4", "bytes": 3872 },
     { "path": "lessons/0001-uart-is-what.html", "sha256": "dc0485d734435143371f1ff842120ccb501c695c10c642c506ff4b004ff73c83", "bytes": 7818 },
     { "path": "lessons/0002-character-to-frame.html", "sha256": "5bef0b04f09965214636c1273c1ba6d872426ababcf4845c3e9660ff5cf6287e", "bytes": 8670 },
-    { "path": "lessons/0003-baud-and-sampling.html", "sha256": "1d2bc9fa0fd79c4ec963ed8c8ff012b5a8f1bdaea817b8e53e7a8974a2ef9039", "bytes": 9419 },
+    { "path": "lessons/0003-baud-and-sampling.html", "sha256": "03da90f3ee7d6602bb88edb65ce8ddd144fa2481fb4f17bf7682b2626c79a0fe", "bytes": 9439 },
+    { "path": "lessons/0004-first-transmit.html", "sha256": "983a190a0e566ee73dcd46baafb24c8c5ec043694326d68880f7ff96d258c2d2", "bytes": 11480 },
     { "path": "reference/uart-beginner-quick-reference.html", "sha256": "63d8a89eeeec7bec53202e9767f63c0fe928cf2938a343647862a8567185dbbc", "bytes": 3002 }
   ]
 }

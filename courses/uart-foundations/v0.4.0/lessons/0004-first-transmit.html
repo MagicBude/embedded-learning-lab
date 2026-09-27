@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>第 4 课：工具、接线与第一次发送</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body>
+<header class="topbar"><div class="shell"><a class="brand" href="../index.html">UART Foundations</a><nav class="toplinks"><a href="../index.html">课程目录</a><a href="../reference/uart-beginner-quick-reference.html">入门速查</a><a href="../../../../courses/uart-foundations/">课程介绍</a></nav></div></header>
+<main class="shell layout">
+<article class="reading">
+  <p class="eyebrow">Lesson 04 · 第一次实机证据</p>
+  <h1>工具、接线与第一次发送</h1>
+  <p class="lead"><strong>本课目标：</strong>安全连接 STM32F103C8T6 与 3.3 V USB-UART，在 STM32CubeMX/CubeIDE 中配置 USART1，用 HAL 轮询发送固定消息，并保存一份能证明链路工作的终端证据。</p>
+
+  <h2 id="result">1. 先看本课的成功标准</h2>
+  <p>烧录程序后，电脑串口终端每秒稳定显示一行：</p>
+  <pre>UART alive
+UART alive
+UART alive</pre>
+  <p>“代码编译通过”不能证明 UART 工作；“终端窗口打开”也不能证明数据来自开发板。本课的验收证据是：终端参数、连续输出和程序中的固定消息能够对应，并且复位开发板后输出从头恢复。</p>
+
+  <h2 id="tools">2. 每件工具分别做什么</h2>
+  <table><thead><tr><th>工具</th><th>本课职责</th><th>不负责什么</th></tr></thead><tbody>
+    <tr><td>STM32F103C8T6 最小系统板</td><td>运行程序并由 PA9 输出 USART1_TX</td><td>不能直接把 UART 电平变成电脑 USB</td></tr>
+    <tr><td>SWD 调试器</td><td>下载程序、复位和调试 MCU</td><td>本课不把它当作串口转换器</td></tr>
+    <tr><td>3.3 V USB-UART</td><td>把 PA9 上的 UART 逻辑电平转换为电脑 USB 数据</td><td>不解释消息内容，也不替代 SWD 烧录</td></tr>
+    <tr><td>串口终端</td><td>选择端口和参数，显示收到的字节</td><td>不能修复错误接线或错误波特率</td></tr>
+  </tbody></table>
+  <blockquote><strong>开发板差异提醒：</strong>市场上的 STM32F103C8T6 小板可能来自不同厂家和批次，丝印、晶振、供电跳线及板载电路并不完全一致。芯片引脚功能以 ST 数据手册和参考手册为准，板级供电方式必须同时核对你手中开发板的原理图或说明。</blockquote>
+
+  <h2 id="safety">3. 上电前做一次安全体检</h2>
+  <ol class="checklist">
+    <li><strong>断电接线：</strong>先拔掉 USB-UART 和开发板电源，再移动杜邦线。</li>
+    <li><strong>确认信号电平：</strong>USB-UART 的逻辑电平必须设置或确认为 3.3 V；不要把传统 RS-232 接口直接接入 MCU。</li>
+    <li><strong>只保留一个明确电源方案：</strong>本实验只连接 USB-UART 的 TX、RX、GND，不连接它的 VCC。开发板由已核对说明的独立方式供电，避免两个电源互相回灌。</li>
+    <li><strong>先查标签再接：</strong>不同 USB-UART 模块的针脚顺序不同，不能凭颜色或“通常位置”猜测。</li>
+    <li><strong>保留 SWD：</strong>不要占用 PA13/SWDIO 和 PA14/SWCLK，以便程序异常时仍能重新烧录和调试。</li>
+  </ol>
+  <div class="callout"><strong>停手条件：</strong>无法确认模块逻辑电平、开发板供电入口或 GND 引脚时，不要通电。先查模块型号和板级原理图。</div>
+
+  <h2 id="wiring">4. 使用 USART1 默认引脚接线</h2>
+  <p>STM32F103 默认映射下，USART1_TX 位于 PA9，USART1_RX 位于 PA10。USART1 也可重映射到 PB6/PB7，但本课不启用重映射。</p>
+  <pre aria-label="STM32F103 与 USB-UART 接线">STM32F103C8T6          3.3 V USB-UART
+PA9  / USART1_TX  ───→ RXD
+PA10 / USART1_RX  ←─── TXD
+GND                 ── GND
+                       VCC 不连接</pre>
+  <p>本课只发送，所以真正必需的是 PA9→RXD 和 GND；仍可把 PA10←TXD 接好，为下一课接收与回环做准备。接线完成后用手机拍照或画一张记录，尤其标明模块的电平档位。</p>
+
+  <h2 id="configure">5. 在 CubeMX 中配置 USART1</h2>
+  <ol>
+    <li>创建或打开目标为 <code>STM32F103C8Tx</code> 的工程，并确认芯片型号与实物一致。</li>
+    <li>在 <strong>System Core → SYS</strong> 中保留 Serial Wire 调试方式。</li>
+    <li>把 <strong>Connectivity → USART1</strong> 设为 Asynchronous。</li>
+    <li>确认引脚图显示 PA9 为 <code>USART1_TX</code>、PA10 为 <code>USART1_RX</code>，没有启用 USART1 remap。</li>
+    <li>设置 <code>115200 baud</code>、8 data bits、No parity、1 stop bit、无硬件流控、TX/RX 模式。</li>
+    <li>生成工程后检查初始化结构，而不是只相信界面：波特率、字长、停止位、校验、模式和流控应与配置一致。</li>
+  </ol>
+  <pre>huart1.Instance = USART1;
+huart1.Init.BaudRate = 115200;
+huart1.Init.WordLength = UART_WORDLENGTH_8B;
+huart1.Init.StopBits = UART_STOPBITS_1;
+huart1.Init.Parity = UART_PARITY_NONE;
+huart1.Init.Mode = UART_MODE_TX_RX;
+huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;</pre>
+  <p>CubeMX 还会生成 GPIO 和外设时钟初始化。本课使用生成代码建立第一个可观察结果；后续再沿调用路径解释关键寄存器，而不是现在手写一整套初始化。</p>
+
+  <h2 id="code">6. 发送第一条固定消息</h2>
+  <p>把下面代码放入生成器保留的用户代码区域，避免重新生成时被覆盖：</p>
+  <pre><code>/* USER CODE BEGIN 2 */
+uint8_t message[] = "UART alive\r\n";
+/* USER CODE END 2 */
+
+/* Infinite loop */
+while (1)
+{
+  HAL_StatusTypeDef status = HAL_UART_Transmit(
+      &amp;huart1,
+      message,
+      sizeof(message) - 1U,
+      100U);
+
+  if (status != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  HAL_Delay(1000U);
+}</code></pre>
+  <p><code>&amp;huart1</code> 指定 USART1 句柄；<code>message</code> 是发送缓冲区首地址；<code>sizeof(message) - 1U</code> 排除 C 字符串末尾自动附加的 <code>\0</code>；<code>100U</code> 是轮询等待超时，单位为毫秒。</p>
+  <blockquote><strong>为什么先用轮询发送：</strong>它会等待本次数据发送完成，行为直观，适合第一次建立链路。它也会占用 CPU 等待，因此只是教学起点，不是所有场景的最终方案。</blockquote>
+
+  <h2 id="observe">7. 在终端中取得证据</h2>
+  <ol>
+    <li>编译并通过 SWD 烧录程序，确认下载无错误。</li>
+    <li>在电脑设备管理器或系统端口列表中识别 USB-UART 对应端口，不要靠猜。</li>
+    <li>终端设置为 115200、8 data bits、No parity、1 stop bit、No flow control。</li>
+    <li>打开端口并复位开发板，观察是否每秒出现一行 <code>UART alive</code>。</li>
+    <li>保存截图或文本日志，记录日期、芯片/开发板、端口参数、接线和固件提交。</li>
+  </ol>
+  <section class="exercise"><h3>本课证据包</h3><ul><li>一张清楚标记 TX、RX、GND 与 3.3 V 档位的接线图或照片；</li><li>一张包含串口参数和至少三行连续输出的终端截图；</li><li>源码中发送调用所在位置；</li><li>一次复位后输出重新出现的观察记录。</li></ul><details class="answer"><summary>为什么要同时保存这四类证据</summary><p>接线证明物理路径，终端截图证明外部可观察结果，源码证明输出来源，复位实验把持续出现的文本与板上程序联系起来。只有其中一项时，仍可能把旧终端缓存、错误端口或偶然输出误判为成功。</p></details></section>
+
+  <h2 id="debug">8. 没有输出或出现乱码时怎么排</h2>
+  <table><thead><tr><th>现象</th><th>先查什么</th><th>可验证动作</th></tr></thead><tbody>
+    <tr><td>终端完全无输出</td><td>端口、GND、PA9→RXD、程序是否运行</td><td>复位板卡；交换回正确 RXD；用断点确认进入发送调用</td></tr>
+    <tr><td>稳定乱码</td><td>双方波特率与帧格式、实际外设时钟</td><td>双方统一为 115200 8N1；有仪器时测量 <code>0x55</code> 位宽</td></tr>
+    <tr><td>偶尔缺行</td><td>供电、接触、复位、发送返回值</td><td>记录 <code>status</code>；更换可靠导线；观察是否发生复位</td></tr>
+    <tr><td>下载后仍显示旧文本</td><td>烧录目标、构建配置、终端缓存</td><td>修改固定消息并重新全量构建；关闭重开终端</td></tr>
+  </tbody></table>
+  <p>排错时一次只改变一个变量，并记录改变前后的证据。不要同时换端口、改波特率、重接所有线又改代码，否则即使恢复也不知道根因。</p>
+
+  <h2 id="recall">9. 自测</h2>
+  <p>建议先独立作答，再逐题展开参考答案。</p>
+  <ol class="self-check">
+    <li>为什么本课让 USB-UART 的 VCC 保持不连接？<details class="answer"><summary>点击显示第 1 题答案</summary><p>为了让板卡只有一个明确、已核对的供电来源，避免 USB-UART 与另一电源之间互相回灌。本课只需要 TX、RX 和共同 GND 就能传输数据。</p></details></li>
+    <li>PA9 和 PA10 在 USART1 默认映射中分别是什么？<details class="answer"><summary>点击显示第 2 题答案</summary><p>PA9 是 USART1_TX，连接 USB-UART 的 RXD；PA10 是 USART1_RX，连接 USB-UART 的 TXD。若启用重映射则会变成 PB6/PB7，因此必须同时检查 CubeMX 引脚图和 AFIO 配置。</p></details></li>
+    <li><code>sizeof(message) - 1U</code> 为什么要减一？<details class="answer"><summary>点击显示第 3 题答案</summary><p>字符数组由字符串字面量初始化时，末尾还包含一个 C 字符串终止符 <code>\0</code>。减一只发送可见消息和 <code>\r\n</code>，不把终止符当作线路数据发送。</p></details></li>
+    <li>代码编译并烧录成功，是否已经证明 UART 链路成功？<details class="answer"><summary>点击显示第 4 题答案</summary><p>没有。它只证明程序可以构建并写入芯片。还必须在正确接线和终端配置下观察到与程序对应的输出，最好再通过复位或波形确认数据确实来自目标板。</p></details></li>
+    <li>为什么轮询发送适合第一步，却不一定适合最终程序？<details class="answer"><summary>点击显示第 5 题答案</summary><p>轮询发送的控制流简单、容易观察，适合建立第一条链路；等待期间 CPU 可能无法处理其他工作，数据量或实时任务增加后通常要比较中断或 DMA 等非阻塞方案。</p></details></li>
+  </ol>
+  <nav class="lesson-nav"><a href="0003-baud-and-sampling.html">← 上一课</a><a href="../index.html">返回课程目录 →</a></nav>
+</article>
+<aside class="side"><strong>本课目录</strong><ol><li><a href="#result">成功标准</a></li><li><a href="#tools">工具分工</a></li><li><a href="#safety">安全体检</a></li><li><a href="#wiring">接线</a></li><li><a href="#configure">CubeMX 配置</a></li><li><a href="#code">发送代码</a></li><li><a href="#observe">取得证据</a></li><li><a href="#debug">排错</a></li><li><a href="#recall">自测</a></li></ol></aside>
+</main>
+<footer class="footer"><div class="shell">第 4 课 · 内容依据 STM32F103x8/xB 数据手册、RM0008 与 UM1850 · 审核中</div></footer>
+</body>
+</html>
