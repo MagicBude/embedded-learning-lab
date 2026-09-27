@@ -55,6 +55,7 @@ For each request:
 - Explain observable meaning at each representation boundary, for example character → numeric code → byte in memory → framed bits → voltage over time. Name the transformation and the component responsible for it.
 - Include “容易混淆” corrections for likely category errors, especially UART versus voltage standard, connector, terminal program, message protocol, USART, RS-232, RS-485, and USB-UART.
 - Use retrieval practice and delayed review to build storage strength; do not mistake rereading for mastery.
+- Put a collapsible reference answer directly under each self-check question. Ask the learner to answer first, then reveal the reasoning. Do not collect several answers into one detached answer block that forces the learner to match them manually.
 - Exercises must include feedback or a verifiable result. Hardware exercises must specify safe wiring, expected evidence, failure cases, and recovery.
 - Never infer mastery from material merely being displayed. Record progress only from user action or explicit evidence, using the project's approved learning-state model.
 - Preserve the project's progression from generic concepts to STM32F103C8T6 details; platform examples must not masquerade as universal behavior.

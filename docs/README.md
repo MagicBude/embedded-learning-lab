@@ -54,6 +54,7 @@
 保存竞品、创作者、技术方案和资料来源的调研结果。调研结论只有在被用户确认并写入 `project/decisions.md` 后，才成为项目约束。
 
 - `learning-routes-and-site-patterns.md`：嵌入式学习路线、题库和个人知识站的代表性模式与采用结论。
+- `uart-course-structure.md`：UART 教程与课程结构对照、原六课诊断和十课重构结论。
 
 ### `assets/`
 

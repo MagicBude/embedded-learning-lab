@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="color-scheme" content="light"><title>UART：从一个字符到可靠串口程序</title><link rel="stylesheet" href="assets/course.css"></head>
+<body>
+  <header class="topbar"><div class="shell"><a class="brand" href="index.html">UART Foundations</a><nav class="toplinks" aria-label="课程导航"><a href="lessons/0001-uart-is-what.html">开始学习</a><a href="reference/uart-beginner-quick-reference.html">入门速查</a><a href="../../../courses/uart-foundations/">课程介绍</a></nav></div></header>
+  <main class="shell">
+    <section class="hero"><p class="eyebrow">UART Foundations · v0.4.0 · 审核中</p><h1>UART：从一个字符到可靠串口程序</h1><p class="lead">先建立设备、字节、帧与时间模型，再在 STM32F103C8T6 上依次完成轮询、中断、环形缓冲区、故障诊断和 DMA 接收。</p><a class="button" href="lessons/0001-uart-is-what.html">从第 1 课开始</a></section>
+    <section><h2>你最终会做到什么</h2><p class="lead">安全连接 STM32F103C8T6 与 3.3 V USB-UART，写出可观察的轮询与非阻塞收发程序，管理连续字节流，并能依据状态、日志或波形定位故障。</p></section>
+    <section><h2>课程目录</h2><ol class="course-list">
+      <li class="course-card"><span>01</span><div><h2><a href="lessons/0001-uart-is-what.html">UART 是什么：设备、线路与接口边界</a></h2><p>先建立完整系统地图，弄清 UART 解决什么问题以及不负责什么。</p></div><span class="badge">可学习</span></li>
+      <li class="course-card"><span>02</span><div><h2><a href="lessons/0002-character-to-frame.html">字符怎样变成 UART 帧</a></h2><p>沿着字符、编码、字节、位序和 8N1 帧完成一次完整转换。</p></div><span class="badge">可学习</span></li>
+      <li class="course-card"><span>03</span><div><h2><a href="lessons/0003-baud-and-sampling.html">波特率、采样与时钟误差</a></h2><p>计算位时间、帧时间和有效速率，观察采样点如何漂移。</p></div><span class="badge">可学习</span></li>
+      <li class="course-card"><span>04</span><div><h2>工具、接线与第一次发送</h2><p>安全接线、CubeMX 配置、HAL 轮询发送和终端证据。</p></div><span class="badge">建设路线</span></li>
+      <li class="course-card"><span>05</span><div><h2>轮询接收、超时与回环</h2><p>完成单字节和定长接收，观察阻塞、超时和 echo。</p></div><span class="badge">已规划</span></li>
+      <li class="course-card"><span>06</span><div><h2>字节流、字符串与缓冲区</h2><p>区分容量、有效长度、字符串结尾和二进制数据。</p></div><span class="badge">已规划</span></li>
+      <li class="course-card"><span>07</span><div><h2>中断实现非阻塞接收</h2><p>理解 RXNE、回调、重新挂接和主循环协作。</p></div><span class="badge">已规划</span></li>
+      <li class="course-card"><span>08</span><div><h2>环形缓冲区、溢出与持续数据流</h2><p>用读写索引承接连续输入，并显式处理溢出。</p></div><span class="badge">已规划</span></li>
+      <li class="course-card"><span>09</span><div><h2>错误标志与证据化排错</h2><p>联合接线、配置、ORE/FE/NE、日志和波形定位故障。</p></div><span class="badge">已规划</span></li>
+      <li class="course-card"><span>10</span><div><h2>DMA、IDLE 与消息边界</h2><p>区分自动搬运、空闲检测和应用层消息协议。</p></div><span class="badge">已规划</span></li>
+    </ol></section>
+  </main>
+  <footer class="footer"><div class="shell">Embedded Learning Lab · 原创内容 CC BY-SA 4.0 · 代码 MIT</div></footer>
+</body>
+</html>

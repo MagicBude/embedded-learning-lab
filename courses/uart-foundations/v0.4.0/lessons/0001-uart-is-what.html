@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>第 1 课：UART 是什么</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body>
+<header class="topbar"><div class="shell"><a class="brand" href="../index.html">UART Foundations</a><nav class="toplinks"><a href="../index.html">课程目录</a><a href="../reference/uart-beginner-quick-reference.html">入门速查</a><a href="../../../../courses/uart-foundations/">课程介绍</a></nav></div></header>
+<main class="shell layout">
+<article class="reading">
+  <p class="eyebrow">Lesson 01 · 建立系统地图</p>
+  <h1>UART 是什么：设备、线路与接口边界</h1>
+  <p class="lead"><strong>本课目标：</strong>面对一块 MCU、一个 USB-UART 模块和一台电脑，能指出每个部件的职责，画出 TX、RX、GND 连接，并解释 UART 规定了什么、没有规定什么。</p>
+
+  <h2 id="problem">1. 先从一个真实问题开始</h2>
+  <p>STM32 测得温度为 25 ℃，你想在电脑上看到它。MCU 内部保存的是数字，电脑在另一边，两者之间必须有一条可以传递信息的路径。</p>
+  <p>一种办法是用很多根线同时传送多个 bit；另一种办法是只用一根发送线，让 bit 按时间一个接一个通过。UART 采用后一种思路：它用较少的引脚，把并行数据变成串行电平，也能把收到的串行电平还原成数据。</p>
+  <blockquote><strong>先记住一句话：</strong>UART 是芯片内部负责“字节与串行 bit 流互相转换”的通信外设。</blockquote>
+
+  <h2 id="name">2. 名字里的三个关键词</h2>
+  <dl class="concept-list">
+    <div><dt>Universal（通用）</dt><dd>它不绑定温度传感器、GPS 或某一种消息格式；许多设备都能使用相同的收发机制。</dd></div>
+    <div><dt>Asynchronous（异步）</dt><dd>两端不连接一根持续工作的共享时钟线。双方仍必须事先约定传输速度和帧格式。</dd></div>
+    <div><dt>Receiver / Transmitter（收发器）</dt><dd>接收器和发送器相互独立，因此常见 UART 可以一边发送、一边接收。</dd></div>
+  </dl>
+  <p>“异步”绝不表示不需要时间约定。没有共享时钟线以后，两端反而必须把波特率、数据位、校验和停止位配置一致。</p>
+
+  <h2 id="system">3. 一条完整的数据路径</h2>
+  <pre aria-label="STM32 到电脑的 UART 数据路径">STM32 程序
+    ↓ 写入字节
+STM32 的 USART/UART 外设
+    ↓ TX 引脚上的 3.3 V 串行电平
+USB-UART 转换器
+    ↓ USB 数据
+电脑驱动与串口终端</pre>
+  <p>这里至少发生了两次转换：UART 外设负责“字节 ↔ 串行电平”，USB-UART 模块负责“UART 电平 ↔ USB”。终端软件只是在电脑上显示和发送数据，它不是 UART 外设。</p>
+  <p>STM32F103 的手册通常把功能更丰富的外设称为 USART（Universal Synchronous/Asynchronous Receiver/Transmitter，通用同步/异步收发器）。当它工作在异步模式时，就是本课程所说的 UART 用法。</p>
+
+  <h2 id="wiring">4. 为什么 TX 要接 RX，还必须共地</h2>
+  <pre aria-label="最小双向 UART 连接">STM32 TX  ─────────→  USB-UART RX
+STM32 RX  ←─────────  USB-UART TX
+STM32 GND ──────────  USB-UART GND</pre>
+  <p>TX 是本设备的发送输出，RX 是本设备的接收输入，所以两个设备之间必须交叉连接。GND 提供双方判断高低电平的共同参考；没有共同参考，即使 TX 在变化，接收端也可能无法可靠判断它是高还是低。</p>
+  <div class="callout"><strong>安全边界：</strong>本课程默认使用 3.3 V TTL/CMOS 电平。接线前必须确认 USB-UART 的逻辑电平，不能把传统 RS-232 接口的正负电压直接接到 STM32 引脚。</div>
+
+  <h2 id="boundary">5. UART 规定了什么，不规定什么</h2>
+  <table><thead><tr><th>问题</th><th>UART 是否负责</th></tr></thead><tbody>
+    <tr><td>bit 按什么顺序、什么速度发送</td><td>负责：由帧格式和波特率决定</td></tr>
+    <tr><td>引脚采用 3.3 V、RS-232 还是 RS-485 电气接口</td><td>不负责：需要另外的电平或收发器规范</td></tr>
+    <tr><td>字节代表文字、温度还是命令</td><td>不负责：由编码和应用协议决定</td></tr>
+    <tr><td>一条消息从哪里开始、在哪里结束</td><td>不负责：由定长、分隔符、长度字段等上层规则决定</td></tr>
+    <tr><td>电脑如何通过 USB 看到串口</td><td>不负责：由 USB-UART、驱动和终端软件完成</td></tr>
+  </tbody></table>
+
+  <h2 id="practice">6. 就地练习：给部件分工</h2>
+  <section class="exercise"><h3>情境</h3><p>电脑终端显示乱码。你准备依次检查“终端波特率”“USB-UART 电平”“STM32 发送的数据含义”。它们分别属于哪一层？</p><details><summary>展开答案与判断依据</summary><ol><li><strong>终端波特率：</strong>UART 配置是否一致。</li><li><strong>USB-UART 电平：</strong>物理电气接口是否兼容。</li><li><strong>数据含义：</strong>字符编码或应用协议。</li></ol><p>三者都可能让结果看起来不对，但不能混成同一个问题。</p></details></section>
+
+  <h2 id="recall">7. 不看正文，自检一次</h2>
+  <p>建议先独立作答，再逐题展开参考答案。</p>
+  <ol class="self-check">
+    <li>用一句话说明 UART 是什么。<details class="answer"><summary>点击显示第 1 题答案</summary><p>UART 是芯片内部负责把字节转换成按时间排列的串行 bit 流，并把收到的串行 bit 流恢复成字节的通信外设。</p></details></li>
+    <li>为什么异步 UART 仍然需要双方配置相同的波特率？<details class="answer"><summary>点击显示第 2 题答案</summary><p>“异步”只表示两端没有连接持续工作的共享时钟线。接收器仍要用自己的本地时钟推算采样时刻，因此双方必须预先约定接近的传输速度和相同帧格式。</p></details></li>
+    <li>画出两个设备双向通信所需的三根线。<details class="answer"><summary>点击显示第 3 题答案</summary><p>A.TX 接 B.RX，A.RX 接 B.TX，A.GND 接 B.GND。发送输出必须接到对方接收输入，共地为高低电平提供共同参考。</p></details></li>
+    <li>USB-UART 模块和串口终端分别负责什么？<details class="answer"><summary>点击显示第 4 题答案</summary><p>USB-UART 模块在 UART 逻辑电平与 USB 数据之间转换；串口终端是电脑软件，负责让人选择参数、发送数据并查看收到的内容。</p></details></li>
+    <li>UART 能否知道收到的 <code>0x41</code> 是字母、温度还是命令？为什么？<details class="answer"><summary>点击显示第 5 题答案</summary><p>不能。UART 只负责传输帧和恢复字节，不解释字节语义。把 <code>0x41</code> 解释成字母 <code>A</code> 需要 ASCII 编码规则；解释成温度或命令则需要应用协议。</p></details></li>
+  </ol>
+  <nav class="lesson-nav"><a href="../index.html">← 课程目录</a><a href="0002-character-to-frame.html">下一课：字符怎样变成帧 →</a></nav>
+</article>
+<aside class="side"><strong>本课目录</strong><ol><li><a href="#problem">真实问题</a></li><li><a href="#name">名字含义</a></li><li><a href="#system">完整路径</a></li><li><a href="#wiring">最小连接</a></li><li><a href="#boundary">能力边界</a></li><li><a href="#practice">就地练习</a></li><li><a href="#recall">自检</a></li></ol></aside>
+</main>
+<footer class="footer"><div class="shell">第 1 课 · 内容依据 STM32F103 RM0008 · 审核中</div></footer>
+</body>
+</html>

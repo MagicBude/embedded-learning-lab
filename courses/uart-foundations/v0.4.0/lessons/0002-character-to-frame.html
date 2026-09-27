@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>第 2 课：字符怎样变成 UART 帧</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body>
+<header class="topbar"><div class="shell"><a class="brand" href="../index.html">UART Foundations</a><nav class="toplinks"><a href="../index.html">课程目录</a><a href="../reference/uart-beginner-quick-reference.html">入门速查</a><a href="../../../../courses/uart-foundations/">课程介绍</a></nav></div></header>
+<main class="shell layout">
+<article class="reading">
+  <p class="eyebrow">Lesson 02 · 跟踪一次完整转换</p>
+  <h1>字符怎样变成 UART 帧</h1>
+  <p class="lead"><strong>本课目标：</strong>不借助现成波形图，从字符 <code>A</code> 出发，依次得到编码值、内存字节、D0～D7 位序和完整 8N1 帧，并能从线路位序还原原字节。</p>
+
+  <h2 id="representations">1. 同一个信息为什么有多种样子</h2>
+  <p>终端里看到的是字符，程序变量里保存的是数值，内存里是一个字节，UART 引脚上传输的是随时间变化的高低电平。这些不是四份不同的数据，而是同一信息在不同边界上的表示。</p>
+  <pre aria-label="字符到线路的表示转换">字符 A
+  ↓ ASCII 编码规则
+数值 65，也写作 0x41
+  ↓ 以 8 bit 保存
+字节 0100 0001
+  ↓ UART 发送器加入起始位和停止位，并按 D0→D7 移出
+线路帧 0 | 1 0 0 0 0 0 1 0 | 1</pre>
+  <p>每个箭头都代表一次有责任主体的转换：编码规则解释字符，程序和内存保存字节，UART 外设负责成帧与移位。把这些边界说清，排错时才能知道应该观察哪一层。</p>
+
+  <h2 id="encoding">2. 字符不是天然等于某个数字</h2>
+  <p>ASCII 规定大写字母 <code>A</code> 的编码值为十进制 65，即十六进制 <code>0x41</code>。二进制写成八位是 <code>0100 0001</code>。</p>
+  <table><thead><tr><th>写法</th><th>值</th><th>说明</th></tr></thead><tbody><tr><td><code>'A'</code></td><td>字符字面量</td><td>在采用 ASCII 的环境中对应 65</td></tr><tr><td><code>65</code></td><td>十进制整数</td><td>人类常用的十进制表示</td></tr><tr><td><code>0x41</code></td><td>十六进制整数</td><td>便于按半字节观察</td></tr><tr><td><code>0100 0001</code></td><td>8 bit 模式</td><td>bit 7 在左，bit 0 在右</td></tr></tbody></table>
+  <blockquote><strong>容易混淆：</strong><code>0x41</code> 本身只是一组 bit。只有使用 ASCII 等字符编码解释它时，它才表示 <code>A</code>。</blockquote>
+
+  <h2 id="bit-order">3. 纸面写法和发送顺序相反吗</h2>
+  <p>我们通常把最高有效位 D7 写在左边、最低有效位 D0 写在右边。但常见 UART 帧先发送 D0，再发送 D1，直到 D7。对 <code>0x41 = 0100 0001</code>：</p>
+  <pre>D7 D6 D5 D4 D3 D2 D1 D0   纸面从左到右
+ 0  1  0  0  0  0  0  1
+
+D0 D1 D2 D3 D4 D5 D6 D7   时间从早到晚
+ 1  0  0  0  0  0  1  0</pre>
+  <p>这叫 LSB first（最低有效位先发）。它不是把整个字节的数值反转，而只是规定线路上的时间顺序。</p>
+
+  <h2 id="frame">4. 为什么数据外面还要加起始位和停止位</h2>
+  <p>线路空闲时通常保持高电平。发送器准备发送后，先把线路拉低一个位时间，形成起始位；接收器看到这个下降沿，便获得本帧的时间参考。随后是数据位，可选校验位，最后回到高电平作为停止位。</p>
+  <p><strong>8N1</strong> 表示 8 个数据位、No parity（无校验位）、1 个停止位。再加固定的 1 个起始位，因此发送一个有效字节需要 10 个线路 bit。</p>
+  <pre>空闲  Start | D0 D1 D2 D3 D4 D5 D6 D7 | Stop  空闲
+ 1      0   |  1  0  0  0  0  0  1  0 |  1      1</pre>
+  <p>停止位不仅是“结束标记”，还让线路回到空闲状态，为下一帧的起始下降沿做好准备。接收器若在应为停止位的位置没有读到高电平，通常会报告 framing error（帧错误）。</p>
+
+  <h2 id="parity">5. 校验位能做什么，不能做什么</h2>
+  <p>可选的奇偶校验位根据数据位中 1 的数量生成。例如偶校验要求“数据位加校验位”的 1 总数为偶数。它能发现一部分传输错误，但不能纠正错误，也不能可靠发现所有多位错误，更不能替代消息级 CRC、重发或协议设计。</p>
+
+  <section class="exercise" data-frame-exercise>
+    <h3>动手练习：先预测，再生成 8N1 帧</h3>
+    <p>输入一个 ASCII 字符。提交前先由二进制最右侧判断 D0，避免只看生成结果。</p>
+    <form><div class="field"><label for="character">单个 ASCII 字符</label><input id="character" name="character" value="A" maxlength="1"></div><fieldset><legend>先预测 D0</legend><label><input type="radio" name="prediction" value="0" required>0</label><label><input type="radio" name="prediction" value="1">1</label></fieldset><button class="button" type="submit">检查并生成</button></form>
+    <p class="feedback" data-feedback aria-live="polite">先预测，再生成。</p><p data-conversion></p><div class="frame" data-result hidden></div>
+  </section>
+
+  <h2 id="decode">6. 反过来读一帧</h2>
+  <p>逻辑分析仪显示 <code>0 | 0 1 0 0 0 0 1 0 | 1</code>。去掉起始位和停止位后，按 D0→D7 得到 <code>0,1,0,0,0,0,1,0</code>。恢复成常用的 D7→D0 写法是 <code>0100 0010</code>，即 <code>0x42</code>；按 ASCII 解释就是字符 <code>B</code>。</p>
+  <section class="exercise"><h3>独立练习</h3><p>为字符 <code>U</code> 写出 ASCII 值、八位二进制、D0→D7 顺序和完整 8N1 帧。</p><details><summary>展开答案</summary><p><code>U = 0x55 = 0101 0101</code>。它的位模式正好交替，所以 D0→D7 仍为 <code>1 0 1 0 1 0 1 0</code>；完整帧为 <code>0 | 1 0 1 0 1 0 1 0 | 1</code>。这种交替模式也很适合用示波器或逻辑分析仪观察位宽。</p></details></section>
+
+  <h2 id="recall">7. 离开示例后还能否重建</h2>
+  <p>建议先独立作答，再逐题展开参考答案。</p>
+  <ol class="self-check">
+    <li>字符、编码值、内存字节和线路帧分别属于哪一层？<details class="answer"><summary>点击显示第 1 题答案</summary><p>字符属于人类可读的符号层；编码值由 ASCII 等编码规则给出；内存字节是程序保存的数据表示；线路帧是 UART 外设加入起始位、可选校验位和停止位后，按时间发送的电平序列。</p></details></li>
+    <li>为什么 <code>0100 0001</code> 在线路上先看到的是最右侧的 1？<details class="answer"><summary>点击显示第 2 题答案</summary><p>常见 UART 先发送最低有效位 D0。二进制通常按 D7 到 D0 从左向右书写，所以最右侧正是 D0，它最先出现在数据位时间序列中。</p></details></li>
+    <li>8N1 为什么一帧共有 10 bit？<details class="answer"><summary>点击显示第 3 题答案</summary><p>8N1 包含 8 个数据位、无校验位、1 个停止位；再加 UART 固定的 1 个起始位，共 <code>1 + 8 + 0 + 1 = 10 bit</code>。</p></details></li>
+    <li>接收端在停止位位置读到低电平意味着什么？<details class="answer"><summary>点击显示第 4 题答案</summary><p>停止位预期为高电平。此处读到低电平通常会触发 framing error（帧错误），可能由波特率或帧格式不匹配、线路干扰等问题造成。</p></details></li>
+    <li>奇偶校验为什么不能替代完整消息校验？<details class="answer"><summary>点击显示第 5 题答案</summary><p>奇偶校验只针对一个字符中的 1 的奇偶性，能漏掉部分多 bit 错误，也不知道消息是否缺字节、乱序或属于哪条命令。完整消息还需要长度、CRC、序号或其他协议规则。</p></details></li>
+  </ol>
+  <nav class="lesson-nav"><a href="0001-uart-is-what.html">← 上一课</a><a href="0003-baud-and-sampling.html">下一课：波特率与采样 →</a></nav>
+</article>
+<aside class="side"><strong>本课目录</strong><ol><li><a href="#representations">表示转换</a></li><li><a href="#encoding">字符编码</a></li><li><a href="#bit-order">位序</a></li><li><a href="#frame">8N1 帧</a></li><li><a href="#parity">校验位</a></li><li><a href="#decode">反向解码</a></li><li><a href="#recall">自检</a></li></ol></aside>
+</main>
+<footer class="footer"><div class="shell">第 2 课 · 内容依据 RFC 20 与 STM32F103 RM0008 · 审核中</div></footer>
+<script src="../assets/course.js"></script>
+</body>
+</html>

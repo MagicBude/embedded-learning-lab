@@ -15,10 +15,10 @@ prerequisites: []
 related: [knowledge-data-and-byte-stream-v1, knowledge-uart-frame-and-idle-v1, knowledge-c-buffer-model-v1, knowledge-stm32f103-usart-v1]
 authors: [MagicBude]
 license: CC-BY-SA-4.0
-version: 0.3.0
+version: 0.4.0
 package:
-  version: 0.3.0
-  path: uart-foundations/v0.3.0
+  version: 0.4.0
+  path: uart-foundations/v0.4.0
   status: review
   entry: index.html
   manifest: manifest.json
@@ -64,48 +64,76 @@ sources:
     accessedAt: 2026-09-27
     supports: [UART 时钟误差、采样位置漂移和真实容差影响因素]
 units:
-  - id: uart-u01-byte-to-wire
-    title: UART 是什么：从设备到线路
-    objective: 能说明 UART 解决什么问题、怎样连接、规定与不规定什么，并解释字符 A 如何变成 8N1 线路帧。
+  - id: uart-u01-system-boundary
+    title: UART 是什么：设备、线路与接口边界
+    objective: 能说明 UART 解决什么问题，在完整系统中处于哪里，怎样连接，以及它规定与不规定什么。
+    status: available
+    knowledge: [knowledge-uart-frame-and-idle-v1]
+    exercises: [uart-ex-system-boundary-v1]
+    acceptance: [能解释 UART、串行、异步和全双工, 能画出 TX、RX、GND 交叉连接, 能区分 UART、USB-UART、RS-232 和终端软件]
+  - id: uart-u02-character-to-frame
+    title: 字符怎样变成 UART 帧
+    objective: 能把一个 ASCII 字符逐步转换为编码值、内存字节、D0 至 D7 位序和完整 8N1 线路帧，并反向解码。
     status: available
     knowledge: [knowledge-data-and-byte-stream-v1, knowledge-uart-frame-and-idle-v1]
-    exercises: [uart-ex-system-boundary-v1, uart-ex-frame-builder-v1, uart-ex-start-edge-v1]
-    acceptance: [能解释 UART、串行、异步和全双工, 能画出 TX、RX、GND 交叉连接, 能区分 UART 与相邻接口层, 能画出字符对应的 8N1 帧]
-  - id: uart-u02-speed-and-sampling
-    title: 波特率、采样与误差
-    objective: 能由位时间推导整帧耗时，并解释异步接收端如何采样以及误差为什么向帧尾积累。
+    exercises: [uart-ex-frame-builder-v1, uart-ex-frame-decode-v1]
+    acceptance: [能解释每次表示转换及其责任主体, 能区分纸面位序与线路时间顺序, 能独立生成和解码 8N1 帧, 能说明校验位的能力边界]
+  - id: uart-u03-baud-and-sampling
+    title: 波特率、采样与时钟误差
+    objective: 能由波特率和帧格式推导位时间、帧时间与有效速率，并解释采样点为什么会在帧内累计偏移。
     status: available
     knowledge: [knowledge-uart-frame-and-idle-v1]
     exercises: [uart-ex-frame-time-v1, uart-ex-sampling-drift-v1]
-    acceptance: [能计算位时间与帧时间, 能解释起始位的时间参考作用, 能解释累计采样偏移, 能说明模型不能替代实测]
-  - id: uart-u03-first-stm32-link
-    title: STM32F103 第一次收发
-    objective: 能安全接线并使用 HAL 轮询接口完成发送、接收和回环验证。
+    acceptance: [能区分 baud、bit 每秒和 byte 每秒, 能完整计算位时间与帧时间, 能解释起始位与累计采样偏移, 能说明理想模型不能替代器件手册和实测]
+  - id: uart-u04-first-transmit
+    title: 工具、接线与第一次发送
+    objective: 能安全连接 STM32F103C8T6 与 3.3 V USB-UART，配置 USART1，并用 HAL 轮询发送获得终端证据。
     status: planned
     knowledge: [knowledge-stm32f103-usart-v1]
     exercises: []
-    acceptance: [能完成安全接线、轮询收发和回环证据记录]
-  - id: uart-u04-buffer-and-interrupt
-    title: 中断与缓冲区
-    objective: 能用容量和有效长度管理接收数据，并解释阻塞、溢出和丢字节的原因。
+    acceptance: [能完成接线与配置检查, 能发送固定字节和字符串, 能保存终端输出或波形证据]
+  - id: uart-u05-polling-receive
+    title: 轮询接收、超时与回环
+    objective: 能使用 HAL 轮询接口完成单字节和定长接收，观察阻塞与超时，并实现 echo 回环。
     status: planned
-    knowledge: [knowledge-c-buffer-model-v1, knowledge-stm32f103-usart-v1]
+    knowledge: [knowledge-stm32f103-usart-v1]
     exercises: []
-    acceptance: [能实现有边界检查的非阻塞接收并观察溢出行为]
-  - id: uart-u05-debug-and-evidence
-    title: 用证据排查串口故障
-    objective: 能根据接线、状态标志、日志和逻辑分析仪证据定位常见故障。
-    status: planned
-    knowledge: [knowledge-uart-frame-and-idle-v1, knowledge-stm32f103-usart-v1]
-    exercises: []
-    acceptance: [能依据状态、日志或波形定位至少一种人为故障]
-  - id: uart-u06-dma-and-messages
-    title: DMA 与消息边界
-    objective: 能说明 DMA 解决了什么、没有解决什么，并为字节流设计明确的消息边界。
+    acceptance: [能解释阻塞和超时参数, 能完成轮询回环, 能记录无输入与输入不足时的行为]
+  - id: uart-u06-stream-string-buffer
+    title: 字节流、字符串与缓冲区
+    objective: 能区分容量、有效长度、字符串终止符和二进制数据，并安全处理接收缓冲区。
     status: planned
     knowledge: [knowledge-data-and-byte-stream-v1, knowledge-c-buffer-model-v1]
     exercises: []
-    acceptance: [能区分 DMA 搬运边界与上层消息边界]
+    acceptance: [能避免越界与错误字符串解释, 能用长度处理包含零值的二进制数据]
+  - id: uart-u07-interrupt-receive
+    title: 中断实现非阻塞接收
+    objective: 能解释 RXNE、中断服务与 HAL 回调的协作，并在主循环继续运行时持续接收数据。
+    status: planned
+    knowledge: [knowledge-stm32f103-usart-v1]
+    exercises: []
+    acceptance: [能实现并验证非阻塞接收, 能说明重新挂接接收和共享状态的边界]
+  - id: uart-u08-ring-buffer
+    title: 环形缓冲区、溢出与持续数据流
+    objective: 能用读写索引把中断收到的字节交给主循环，并显式检测和处理缓冲区溢出。
+    status: planned
+    knowledge: [knowledge-c-buffer-model-v1, knowledge-stm32f103-usart-v1]
+    exercises: []
+    acceptance: [能实现有边界检查的环形缓冲区, 能制造并观察溢出, 能说明覆盖与丢弃策略]
+  - id: uart-u09-debug-evidence
+    title: 错误标志与证据化排错
+    objective: 能联合接线、配置、状态标志、日志和逻辑分析仪证据定位常见 UART 故障。
+    status: planned
+    knowledge: [knowledge-uart-frame-and-idle-v1, knowledge-stm32f103-usart-v1]
+    exercises: []
+    acceptance: [能解释 ORE、FE、NE 等错误的可观察意义, 能依据至少两类证据定位一种人为故障]
+  - id: uart-u10-dma-idle-messages
+    title: DMA、IDLE 与消息边界
+    objective: 能区分 DMA 数据搬运、IDLE 空闲检测与应用层消息定界，并完成不定长命令接收案例。
+    status: planned
+    knowledge: [knowledge-data-and-byte-stream-v1, knowledge-c-buffer-model-v1, knowledge-stm32f103-usart-v1]
+    exercises: []
+    acceptance: [能说明 DMA 解决和没有解决的问题, 能比较定长、分隔符、长度字段和 IDLE, 能验证不定长消息接收]
 ---
 
 ## 课程说明
@@ -114,4 +142,4 @@ units:
 
 建议按目录顺序学习：先阅读讲解并完成课内练习，再用入门速查表复习术语和公式。课程中的稳定知识会同时关联到可独立查阅的 Knowledge。
 
-当前版本完成前两课，其余课次只在目录中说明路线，不创建没有正文的空 HTML 页面。整门课程仍处于审核状态。
+当前版本完成前三课，其余课次只在目录中说明路线，不创建没有正文的空 HTML 页面。整门课程仍处于审核状态。

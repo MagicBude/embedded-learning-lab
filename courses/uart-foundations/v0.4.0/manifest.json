@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "courseId": "course-uart-foundations-v1",
+  "slug": "uart-foundations",
+  "version": "0.4.0",
+  "title": "UART：从一个字符到可靠串口程序",
+  "generatedAt": "2026-09-27T20:30:00+08:00",
+  "generator": {
+    "name": "embedded-learning-lab/teach",
+    "version": "0.2.0",
+    "configuration": "standalone-multipage-html; zh-CN; ten-unit progression; native JavaScript"
+  },
+  "review": {
+    "technical": "review",
+    "content": "review",
+    "publication": "unlisted"
+  },
+  "licenses": {
+    "content": "CC-BY-SA-4.0",
+    "code": "MIT"
+  },
+  "entry": "index.html",
+  "units": [
+    { "id": "uart-u01-system-boundary", "order": 1, "status": "available", "path": "lessons/0001-uart-is-what.html" },
+    { "id": "uart-u02-character-to-frame", "order": 2, "status": "available", "path": "lessons/0002-character-to-frame.html" },
+    { "id": "uart-u03-baud-and-sampling", "order": 3, "status": "available", "path": "lessons/0003-baud-and-sampling.html" },
+    { "id": "uart-u04-first-transmit", "order": 4, "status": "planned" },
+    { "id": "uart-u05-polling-receive", "order": 5, "status": "planned" },
+    { "id": "uart-u06-stream-string-buffer", "order": 6, "status": "planned" },
+    { "id": "uart-u07-interrupt-receive", "order": 7, "status": "planned" },
+    { "id": "uart-u08-ring-buffer", "order": 8, "status": "planned" },
+    { "id": "uart-u09-debug-evidence", "order": 9, "status": "planned" },
+    { "id": "uart-u10-dma-idle-messages", "order": 10, "status": "planned" }
+  ],
+  "references": ["reference/uart-beginner-quick-reference.html"],
+  "sources": ["rfc20-ascii", "iso-wg14-n1570", "st-rm0008-usart", "st-um1850-hal", "st-an6363-uart-clock"],
+  "progressMigration": {
+    "from": "0.3.0",
+    "preserveUnitIds": false,
+    "requiresReview": ["uart-u01-system-boundary", "uart-u02-character-to-frame", "uart-u03-baud-and-sampling"],
+    "reason": "原有两个基础单元重新划分为三个单一目标课次，单元 ID、学习顺序、练习位置和验收标准均发生变化。"
+  },
+  "files": [
+    { "path": "assets/course.css", "sha256": "2c5af55fb01121b9353714e2b6535b492539fce35e43897d6ab4b6200622fcfa", "bytes": 7136 },
+    { "path": "assets/course.js", "sha256": "60a1de8dab5e1b692a52c8a5c393f2c184c4d8a599b13fc6ed06bca713378952", "bytes": 2854 },
+    { "path": "index.html", "sha256": "8cb9f8d0a0cba51d2a0e6a219ea4debbf0a3b8fcaf34eaba823cfc06bba5e8af", "bytes": 3828 },
+    { "path": "lessons/0001-uart-is-what.html", "sha256": "dc0485d734435143371f1ff842120ccb501c695c10c642c506ff4b004ff73c83", "bytes": 7818 },
+    { "path": "lessons/0002-character-to-frame.html", "sha256": "5bef0b04f09965214636c1273c1ba6d872426ababcf4845c3e9660ff5cf6287e", "bytes": 8670 },
+    { "path": "lessons/0003-baud-and-sampling.html", "sha256": "1d2bc9fa0fd79c4ec963ed8c8ff012b5a8f1bdaea817b8e53e7a8974a2ef9039", "bytes": 9419 },
+    { "path": "reference/uart-beginner-quick-reference.html", "sha256": "63d8a89eeeec7bec53202e9767f63c0fe928cf2938a343647862a8567185dbbc", "bytes": 3002 }
+  ]
+}

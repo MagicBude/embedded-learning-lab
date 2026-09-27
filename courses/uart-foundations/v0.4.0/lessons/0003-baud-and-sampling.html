@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>第 3 课：波特率、采样与时钟误差</title><link rel="stylesheet" href="../assets/course.css"></head>
+<body>
+<header class="topbar"><div class="shell"><a class="brand" href="../index.html">UART Foundations</a><nav class="toplinks"><a href="../index.html">课程目录</a><a href="../reference/uart-beginner-quick-reference.html">入门速查</a><a href="../../../../courses/uart-foundations/">课程介绍</a></nav></div></header>
+<main class="shell layout">
+<article class="reading">
+  <p class="eyebrow">Lesson 03 · 建立时间模型</p>
+  <h1>波特率、采样与时钟误差</h1>
+  <p class="lead"><strong>本课目标：</strong>能由波特率和帧格式推导位时间、帧时间与有效字节率，并用采样点移动解释两端时钟误差为什么在帧尾更危险。</p>
+
+  <h2 id="clock">1. 没有时钟线，接收器怎么知道何时读取</h2>
+  <p>发送端只输出 TX 电平，不额外发送持续时钟。双方先约定波特率，接收器检测到空闲高电平变为起始位低电平后，用自己的本地时钟推算每个数据位的中心位置，再在那里采样。</p>
+  <pre aria-label="UART 起始沿与采样点">发送线路：空闲 ───┐ Start ┌── D0 ──┐ D1 ┌── D2 …
+                  └───────┘        └────
+接收动作：        发现下降沿   ·D0    ·D1    ·D2
+                              ↑尽量在每个位中央读取</pre>
+  <p>接收器通常会使用高于目标波特率的内部时钟进行过采样，但核心模型不变：起始沿提供一次时间参考，后续采样位置由接收端自己的时钟推算。</p>
+
+  <h2 id="units">2. baud、bit/s 和 byte/s 不是一个量</h2>
+  <p>波特率表示每秒符号数。在本课程讨论的二电平 UART 中，每个符号承载一个 bit，因此常见配置下 <code>115200 baud</code> 与 <code>115200 bit/s</code> 数值相同。但有效字节率还要扣除起始位、校验位和停止位。</p>
+  <pre>8N1 一帧 = 1 个起始位 + 8 个数据位 + 1 个停止位 = 10 bit
+
+理论有效字节率 = 115200 bit/s ÷ 10 bit/帧
+                 = 11520 byte/s</pre>
+  <blockquote><strong>容易混淆：</strong>这里的 <code>byte/s</code> 是理论线路上限，不等于应用每秒一定能处理这么多字节；软件等待、帧间空闲、缓冲区和上层协议还会继续降低有效吞吐。</blockquote>
+
+  <h2 id="calculate">3. 从一个位算到一整帧</h2>
+  <p>位时间是波特率的倒数：</p>
+  <pre>位时间 = 1 ÷ 波特率
+帧时间 = 帧总位数 ÷ 波特率</pre>
+  <p>以 9600 baud、8N1 为例：</p>
+  <ol><li>单个位时间为 <code>1 ÷ 9600 s ≈ 104.17 μs</code>；</li><li>一帧共有 10 bit；</li><li>一帧时间约为 <code>10 × 104.17 μs = 1.042 ms</code>；</li><li>理论有效字节率为 <code>9600 ÷ 10 = 960 byte/s</code>。</li></ol>
+  <p>改为 115200 baud 后，帧结构仍是 10 bit，但位时间缩短到约 8.68 μs，一帧约 86.8 μs。波特率改变的是时间刻度，不会自动改变一个字节的 bit 模式。</p>
+
+  <h2 id="drift">4. 为什么小误差会向帧尾积累</h2>
+  <p>假设发送端的一个位恰好持续 1 个单位，而接收端的本地时钟偏快，它会认为一个位不足 1 个发送端单位，于是 D0 的采样点只提前一点，D1 更早，到了 D7 或停止位已经累计了多次提前量。接收端偏慢时则逐位向后移动。</p>
+  <p>下一帧的起始下降沿会重新校准时间参考，所以通常按“一帧内累计多少偏移”分析，而不是认为偏移会跨所有帧无限累加。</p>
+  <table><thead><tr><th>接收端相对发送端</th><th>采样点趋势</th><th>风险位置</th></tr></thead><tbody><tr><td>时钟偏快</td><td>逐位提前</td><td>帧尾可能读到前一位</td></tr><tr><td>时钟偏慢</td><td>逐位延后</td><td>帧尾可能读到后一位或下一状态</td></tr><tr><td>速度接近</td><td>保持在位中心附近</td><td>仍要考虑边沿、噪声和分频误差</td></tr></tbody></table>
+
+  <h2 id="tolerance">5. 为什么不能死背一个通用容差百分比</h2>
+  <p>“UART 可以容忍 ±2%”之类说法只能作为粗略经验，不能替代器件结论。真实余量同时取决于发送端和接收端误差、过采样方式、起始沿检测、帧长度、波特率分频量化、线路边沿、噪声以及芯片实现。</p>
+  <p>在 STM32F103 上应先根据外设时钟和波特率寄存器得到实际波特率，再结合参考手册的接收器行为以及真实波形验证。下面的互动只是理想时间模型，用于建立趋势直觉。</p>
+
+  <section class="exercise" data-timing-exercise>
+    <h3>动手练习：改变帧格式与相对偏差</h3>
+    <p>先预测“增加一个停止位”会怎样影响帧时间和有效字节率，再调整控件验证。</p>
+    <form class="fields"><div class="field"><label for="baud">波特率</label><input id="baud" name="baud" type="number" min="300" max="4000000" value="115200"></div><div class="field"><label for="dataBits">数据位</label><select id="dataBits" name="dataBits"><option value="8">8</option><option value="9">9</option></select></div><div class="field"><label for="parity">校验位</label><select id="parity" name="parity"><option value="0">无</option><option value="1">有</option></select></div><div class="field"><label for="stopBits">停止位</label><select id="stopBits" name="stopBits"><option value="1">1</option><option value="2">2</option></select></div><div class="field"><label for="mismatch">接收端相对偏差（%）</label><input id="mismatch" name="mismatch" type="range" min="-6" max="6" step=".1" value="2"></div></form>
+    <dl class="metrics"><div><dt>位时间</dt><dd data-bit-time></dd></div><div><dt>帧位数</dt><dd data-frame-bits></dd></div><div><dt>帧时间</dt><dd data-frame-time></dd></div><div><dt>理论字节率</dt><dd data-rate></dd></div></dl><p>最后一个符号中心的理想累计偏移：<strong data-drift></strong></p><p class="feedback" data-risk></p>
+  </section>
+
+  <h2 id="worked">6. 完整推导：57600 baud、8E1</h2>
+  <ol><li><strong>数帧位：</strong>1 个起始位 + 8 个数据位 + 1 个偶校验位 + 1 个停止位，共 11 bit。</li><li><strong>算位时间：</strong><code>1 ÷ 57600 ≈ 17.36 μs</code>。</li><li><strong>算帧时间：</strong><code>11 × 17.36 μs ≈ 191 μs</code>。</li><li><strong>算理论字节率：</strong><code>57600 ÷ 11 ≈ 5236 byte/s</code>。</li><li><strong>解释差异：</strong>它比相同波特率的 8N1 多一个校验位，所以每个有效字节占用更长时间。</li></ol>
+
+  <h2 id="recall">7. 独立推导与迁移</h2>
+  <p>建议先写出公式和推导，再逐题展开参考答案。</p>
+  <ol class="self-check">
+    <li>38400 baud、8N1 的位时间和一帧时间分别是多少？<details class="answer"><summary>点击显示第 1 题答案</summary><p>位时间为 <code>1 ÷ 38400 s ≈ 26.04 μs</code>。8N1 一帧为 10 bit，因此帧时间约为 <code>10 × 26.04 μs = 260.4 μs</code>。</p></details></li>
+    <li>停止位从 1 改成 2，波特率是否改变？有效字节率如何变化？<details class="answer"><summary>点击显示第 2 题答案</summary><p>波特率不变，因为单个符号的时间没有改变；每帧从 10 bit 增加到 11 bit，所以发送同一个有效字节需要更久，理论有效字节率由“波特率 ÷ 10”降为“波特率 ÷ 11”。</p></details></li>
+    <li>接收端时钟偏快时，采样点逐渐提前还是延后？<details class="answer"><summary>点击显示第 3 题答案</summary><p>逐渐提前。接收端认为每个位持续时间更短，所以它安排的后续采样时刻相对发送端越来越靠前。</p></details></li>
+    <li>为什么每一帧的起始沿可以限制误差累计范围？<details class="answer"><summary>点击显示第 4 题答案</summary><p>接收端在每个新起始位的下降沿重新获得时间参考，下一帧不必延续上一帧的采样计时误差，因此主要分析误差在单帧内部的累计。</p></details></li>
+    <li>互动中的采样点没有越界，为什么仍不能证明实机可靠？<details class="answer"><summary>点击显示第 5 题答案</summary><p>互动只计算理想化相对时钟偏差，没有覆盖芯片过采样和分频实现、起始沿检测、线路边沿、噪声、电平兼容及两端各自误差。器件手册和真实波形才是实机结论的依据。</p></details></li>
+  </ol>
+  <nav class="lesson-nav"><a href="0002-character-to-frame.html">← 上一课</a><a href="../index.html">返回课程目录 →</a></nav>
+</article>
+<aside class="side"><strong>本课目录</strong><ol><li><a href="#clock">采样时刻</a></li><li><a href="#units">三个单位</a></li><li><a href="#calculate">时间计算</a></li><li><a href="#drift">累计漂移</a></li><li><a href="#tolerance">模型边界</a></li><li><a href="#worked">完整推导</a></li><li><a href="#recall">独立练习</a></li></ol></aside>
+</main>
+<footer class="footer"><div class="shell">第 3 课 · 内容依据 STM32F103 RM0008 与 ST AN6363 · 审核中</div></footer>
+<script src="../assets/course.js"></script>
+</body>
+</html>
