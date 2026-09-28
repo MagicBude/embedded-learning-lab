@@ -19,3 +19,4 @@ research/
 ## 已有调研
 
 - [学习路线与网站模式调研](learning-routes-and-site-patterns.md)
+- [嵌入式学习路线：面试知识路线](embedded-interview-roadmap.md)
