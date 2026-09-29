@@ -32,12 +32,13 @@ status: accepted
 ## 当前落地状态
 
 - `apps/site/` 已建立 Astro 静态站点，使用 npm 锁定依赖；
-- 根目录 `content/` 保持为不依赖 Web 框架的权威内容源，由站点 Content Collection 读取并校验；
-- 已实现设计令牌、浅深主题、响应式主导航、首页、路线、Knowledge、搜索、关于与 404 页面；
-- 已接入课程 Collection、课程审核入口和 UART v0.4.0 独立多页面课程包；课程包含课程首页、五篇课文、共享 CSS、原生 JavaScript 互动和入门速查；
+- 根目录 `content/` 保持为不依赖 Web 框架的策展记录和项目内容源，由站点 Content Collection 读取并校验；
+- 已实现设计令牌、浅深主题、响应式主导航、首页、路线、资料库、主题指南、搜索、关于与 404 页面；
+- 已接入课程 Collection、课程审核入口和 UART v0.4.0 独立多页面课程包；课程包含课程首页、六篇课文、共享 CSS、原生 JavaScript 互动和入门速查；
 - Pagefind 在生产构建后生成静态中文索引；
 - `.github/workflows/deploy.yml` 负责检查、构建并发布 GitHub Pages；仓库 Pages 发布源已启用并通过首次完整部署验证；
-- 当前已实现课程产物的静态复制和主站入口，尚未实现浏览器学习状态、受限制嵌入容器、互动实验和专项内容校验脚本。
+- 当前已实现课程产物的静态复制和主站入口，尚未实现浏览器学习状态、受限制嵌入容器和互动实验。
+- Sources Collection、10 张首期资料卡、资料库索引与详情、客户端筛选、Source ID 关系解析和内容关系校验已经实现；旧 Knowledge 的界面名称已统一为“主题指南”。
 
 ## 内容层
 
@@ -47,7 +48,8 @@ status: accepted
 - 互动内容按需使用 MDX；
 - Content Collections/Zod 在构建期校验；
 - 稳定业务 ID 不依赖路径或框架生成；
-- 来源、关系和课程字段按产品 Schema 管理；
+- Sources 统一保存来源身份、版本、访问与许可；主题指南、课程和实验通过稳定 ID 引用；
+- 现有 UART 主题指南与课程元数据已经迁移为 Source ID；新内容不得增加重复书目信息；
 - 大型二进制资料不默认提交，必须单独决策。
 
 ## 课程层
@@ -91,7 +93,7 @@ status: accepted
 - WCAG 2.2 AA 目标；
 - 移动端与桌面端响应式；
 - Light / Dark；
-- 普通知识页首屏压缩后 JavaScript 暂定不超过约 100 KB；
+- 普通资料卡和主题指南页首屏压缩后 JavaScript 暂定不超过约 100 KB；
 - 互动内容按需加载；
 - 主流桌面和移动浏览器近两个稳定版本；
 - MIT 代码许可与 CC BY-SA 4.0 内容许可。

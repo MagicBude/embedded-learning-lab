@@ -18,27 +18,21 @@ related: []
 authors: [MagicBude]
 license: CC-BY-SA-4.0
 sources:
-  - id: st-rm0008-usart
-    type: official
-    title: RM0008 STM32F10xxx reference manual
-    organization: STMicroelectronics
-    url: https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101-103-105-107-stm32f100-series-armbased-32bit-mcus-stmicroelectronics.pdf
+  - sourceId: st-rm0008-usart
     locator: Sections 7, 9 and 27
-    accessedAt: 2026-09-27
-    supports:
+    relation: supports
+    claims:
       - USART 外设时钟和 GPIO 复用需要分别配置
       - USART1 位于 APB2 而 USART2 和 USART3 位于 APB1
       - SR、DR、BRR 和 CR 寄存器承担状态、数据、波特率和控制职责
-  - id: st-um1850-hal
-    type: official
-    title: Description of STM32F1 HAL and low-layer drivers
-    organization: STMicroelectronics
-    url: https://www.st.com/resource/en/user_manual/dm00154093-description-of-stm32f1-hal-and-lowlayer-drivers-stmicroelectronics.pdf
+    checkedAt: 2026-09-29
+  - sourceId: st-um1850-hal
     locator: HAL UART driver chapter
-    accessedAt: 2026-09-27
-    supports:
+    relation: explains
+    claims:
       - HAL UART 提供轮询、中断和 DMA 三类收发接口
       - HAL UART 句柄保存初始化、状态、缓冲和错误信息
+    checkedAt: 2026-09-29
 ---
 
 ## 为什么芯片手册写 USART

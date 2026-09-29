@@ -18,37 +18,28 @@ related: [knowledge-c-buffer-model-v1, knowledge-stm32f103-usart-v1]
 authors: [MagicBude]
 license: CC-BY-SA-4.0
 sources:
-  - id: rfc20-ascii
-    type: standard
-    title: RFC 20 — ASCII format for network interchange
-    organization: RFC Editor
-    url: https://www.rfc-editor.org/rfc/rfc20.html
+  - sourceId: rfc20-ascii
     locator: Sections 2 and 3
-    accessedAt: 2026-09-27
-    supports:
+    relation: supports
+    claims:
       - ASCII 使用 7 位编码表示字符
       - 字符 A 的编码值为十六进制 41
-  - id: st-rm0008-usart
-    type: official
-    title: RM0008 STM32F10xxx reference manual
-    organization: STMicroelectronics
-    url: https://www.st.com/resource/en/reference_manual/rm0008-stm32f103xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
+    checkedAt: 2026-09-29
+  - sourceId: st-rm0008-usart
     locator: Section 27, Universal synchronous asynchronous receiver transmitter
-    accessedAt: 2026-09-27
-    supports:
+    relation: supports
+    claims:
       - STM32F103 USART 的 TX 空闲状态为高电平
       - RX 使用过采样恢复数据并区分有效输入与噪声
       - 外设提供帧错误、噪声错误、过载错误和奇偶校验错误标志
-  - id: st-an6363-uart-clock
-    type: official
-    title: AN6363 — Introduction to clock requirements and calibration for STM32 MCUs
-    organization: STMicroelectronics
-    url: https://www.st.com/resource/en/application_note/an6363-introduction-to-clock-requirements-and-calibration-for-stm32-mcus-stmicroelectronics.pdf
+    checkedAt: 2026-09-29
+  - sourceId: st-an6363-uart-clock
     locator: Section 2.1, UART
-    accessedAt: 2026-09-27
-    supports:
+    relation: supports
+    claims:
       - 异步 UART 的时钟偏差会改变帧内采样位置并影响靠后的数据位
       - 实际接收容差同时受帧长度、过采样、分频量化、线路和噪声影响
+    checkedAt: 2026-09-29
 ---
 
 ## 先回答：UART 是什么

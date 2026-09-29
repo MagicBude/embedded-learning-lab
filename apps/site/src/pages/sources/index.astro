@@ -1,0 +1,85 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/site';
+
+const entries = (await getCollection('sources'))
+  .filter(({ data }) => data.maturity === 'verified' && data.visibility === 'public')
+  .sort((a, b) => a.data.title.localeCompare(b.data.title, 'zh-CN'));
+
+const authorityLabels = {
+  normative: '规范性来源',
+  official: '官方资料',
+  educational: '系统教程',
+  practitioner: '工程实践',
+  community: '社区资料',
+};
+const accessLabels = { free: '免费访问', registration: '需注册', mixed: '免费与付费混合', paid: '付费' };
+const domainLabels: Record<string, string> = {
+  'programming-foundations': '编程基础',
+  'mcu-and-bare-metal': 'MCU 与裸机开发',
+  'interfaces-and-communication': '接口与通信',
+  'engineering-testing-and-debugging': '工程、测试与调试',
+};
+const domains = [...new Set(entries.map(({ data }) => data.domain))].sort();
+---
+
+<BaseLayout title="资料库" description="记录嵌入式资料的身份、版本、许可、用途和推荐阅读位置。">
+  <div class="container page">
+    <p class="eyebrow">Sources</p>
+    <h1>资料库</h1>
+    <p class="intro">这里不保存未经授权的全文副本，而是说明资料由谁维护、应该读哪一版、适合解决什么问题，以及能够怎样引用或复用。</p>
+
+    <form class="filters surface" data-source-filters>
+      <label>来源等级<select name="authority"><option value="">全部</option>{Object.entries(authorityLabels).map(([value, label]) => <option value={value}>{label}</option>)}</select></label>
+      <label>知识领域<select name="domain"><option value="">全部</option>{domains.map((value) => <option value={value}>{domainLabels[value] ?? value}</option>)}</select></label>
+      <label>访问方式<select name="access"><option value="">全部</option>{Object.entries(accessLabels).map(([value, label]) => <option value={value}>{label}</option>)}</select></label>
+      <button class="button" type="reset">重置</button>
+    </form>
+
+    <p class="result-count" aria-live="polite" data-result-count>共 {entries.length} 项资料</p>
+    <div class="source-grid" data-source-list>
+      {entries.map(({ data }) => <article class="source-card surface" data-authority={data.authorityLevel} data-domain={data.domain} data-access={data.access}>
+        <div class="card-meta"><span class="tag verified">{authorityLabels[data.authorityLevel]}</span><span class="tag">{accessLabels[data.access]}</span></div>
+        <h2><a href={withBase(`/sources/${data.slug}/`)}>{data.title}</a></h2>
+        <p>{data.summary}</p>
+        <div class="card-footer"><span>{data.organization ?? data.authors.join('、')}</span>{data.version && <span>{data.version}</span>}</div>
+      </article>)}
+    </div>
+    <div class="surface empty" hidden data-empty><h2>没有匹配的资料</h2><p>尝试清除一个筛选条件。</p></div>
+  </div>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector('[data-source-filters]');
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-source-list] [data-authority]')];
+  const count = document.querySelector('[data-result-count]');
+  const empty = document.querySelector<HTMLElement>('[data-empty]');
+
+  function applyFilters() {
+    if (!(form instanceof HTMLFormElement)) return;
+    const values = new FormData(form);
+    let visible = 0;
+    for (const card of cards) {
+      const matches = ['authority', 'domain', 'access'].every((key) => {
+        const selected = String(values.get(key) ?? '');
+        return !selected || card.dataset[key] === selected;
+      });
+      card.hidden = !matches;
+      if (matches) visible += 1;
+    }
+    if (count) count.textContent = `共 ${visible} 项资料`;
+    if (empty) empty.hidden = visible !== 0;
+  }
+
+  form?.addEventListener('change', applyFilters);
+  form?.addEventListener('reset', () => requestAnimationFrame(applyFilters));
+</script>
+
+<style>
+  .page{padding-block:3rem}.page h1{margin:.5rem 0}.intro{max-width:50rem;color:var(--color-text-muted)}
+  .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:.75rem;align-items:end;margin:2rem 0 1rem;padding:1rem}
+  .filters label{display:grid;gap:.35rem;color:var(--color-text-muted);font-size:.875rem;font-weight:600}.filters select{min-height:44px;padding:.45rem .7rem;border:1px solid var(--color-border);border-radius:var(--radius-md);color:var(--color-text);background:var(--color-surface)}
+  .result-count{color:var(--color-text-muted)}.source-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.source-card{display:flex;flex-direction:column;padding:1.25rem}.source-card[hidden]{display:none}.source-card h2{margin:.75rem 0 .35rem;font-size:1.125rem}.source-card h2 a{color:inherit;text-decoration:none}.source-card h2 a:hover{color:var(--color-primary)}.source-card p{margin:.25rem 0 1rem;color:var(--color-text-muted)}.card-meta,.card-footer{display:flex;flex-wrap:wrap;gap:.5rem}.card-footer{justify-content:space-between;margin-top:auto;padding-top:.75rem;border-top:1px solid var(--color-border);color:var(--color-text-muted);font-size:.8rem}.empty{padding:1.5rem}.empty h2,.empty p{margin:.2rem 0}
+  @media(max-width:56rem){.filters{grid-template-columns:repeat(2,minmax(0,1fr))}.source-grid{grid-template-columns:1fr}}@media(max-width:36rem){.filters{grid-template-columns:1fr}}
+</style>

@@ -23,62 +23,41 @@ package:
   entry: index.html
   manifest: manifest.json
 sources:
-  - id: rfc20-ascii
-    type: standard
-    title: RFC 20 — ASCII format for network interchange
-    organization: RFC Editor
-    url: https://www.rfc-editor.org/rfc/rfc20.html
+  - sourceId: rfc20-ascii
     locator: Sections 2 and 3
-    accessedAt: 2026-09-27
-    supports: [字符与编码值的关系]
-  - id: iso-wg14-n1570
-    type: standard
-    title: ISO/IEC 9899:201x Committee Draft N1570
-    organization: ISO/IEC JTC1/SC22/WG14
-    url: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf
+    relation: supports
+    claims: [字符与编码值的关系]
+    checkedAt: 2026-09-29
+  - sourceId: iso-wg14-n1570
     locator: Object representation, arrays and pointer arithmetic
-    accessedAt: 2026-09-27
-    supports: [课程中的字节、数组、指针和缓冲区边界]
-  - id: st-rm0008-usart
-    type: official
-    title: RM0008 STM32F10xxx reference manual
-    organization: STMicroelectronics
-    url: https://www.st.com/resource/en/reference_manual/cd00171190-stm32f101-103-105-107-stm32f100-series-armbased-32bit-mcus-stmicroelectronics.pdf
+    relation: supports
+    claims: [课程中的字节、数组、指针和缓冲区边界]
+    checkedAt: 2026-09-29
+  - sourceId: st-rm0008-usart
     locator: Sections 7, 9 and 27
-    accessedAt: 2026-09-27
-    supports: [STM32F103 时钟、GPIO 和 USART 外设行为]
-  - id: st-ds5319-f103x8-xb
-    type: official
-    title: STM32F103x8 and STM32F103xB datasheet
-    organization: STMicroelectronics
-    url: https://www.st.com/resource/en/datasheet/stm32f103t8.pdf
+    relation: supports
+    claims: [STM32F103 时钟、GPIO 和 USART 外设行为]
+    checkedAt: 2026-09-29
+  - sourceId: st-ds5319-f103x8-xb
     locator: Pinouts and pin description; alternate functions
-    accessedAt: 2026-09-27
-    supports: [STM32F103C8T6 封装引脚与 USART1 默认引脚功能]
-  - id: st-um1850-hal
-    type: official
-    title: Description of STM32F1 HAL and low-layer drivers
-    organization: STMicroelectronics
-    url: https://www.st.com/resource/en/user_manual/dm00154093-description-of-stm32f1-hal-and-lowlayer-drivers-stmicroelectronics.pdf
+    relation: supports
+    claims: [STM32F103C8T6 封装引脚与 USART1 默认引脚功能]
+    checkedAt: 2026-09-29
+  - sourceId: st-um1850-hal
     locator: HAL UART driver chapter
-    accessedAt: 2026-09-27
-    supports: [STM32F1 HAL UART 的轮询、中断和 DMA 接口]
-  - id: st-stm32f1-hal-uart-driver
-    type: official
-    title: STM32F1 HAL UART driver source
-    organization: STMicroelectronics
-    url: https://github.com/STMicroelectronics/stm32f1xx-hal-driver/blob/master/Src/stm32f1xx_hal_uart.c
+    relation: explains
+    claims: [STM32F1 HAL UART 的轮询、中断和 DMA 接口]
+    checkedAt: 2026-09-29
+  - sourceId: st-stm32f1-hal-uart-driver
     locator: HAL_UART_Receive and polling mode documentation
-    accessedAt: 2026-09-27
-    supports: [HAL_UART_Receive 的阻塞、长度、超时、状态与 RXNE 读取路径]
-  - id: st-an6363-uart-clock
-    type: official
-    title: AN6363 — Introduction to clock requirements and calibration for STM32 MCUs
-    organization: STMicroelectronics
-    url: https://www.st.com/resource/en/application_note/an6363-introduction-to-clock-requirements-and-calibration-for-stm32-mcus-stmicroelectronics.pdf
+    relation: explains
+    claims: [HAL_UART_Receive 的阻塞、长度、超时、状态与 RXNE 读取路径]
+    checkedAt: 2026-09-29
+  - sourceId: st-an6363-uart-clock
     locator: Section 2.1, UART
-    accessedAt: 2026-09-27
-    supports: [UART 时钟误差、采样位置漂移和真实容差影响因素]
+    relation: supports
+    claims: [UART 时钟误差、采样位置漂移和真实容差影响因素]
+    checkedAt: 2026-09-29
 units:
   - id: uart-u01-system-boundary
     title: UART 是什么：设备、线路与接口边界

@@ -7,7 +7,7 @@
 ```text
 research/
 ├─ creators/       创作者与内容矩阵
-├─ products/       知识库、课程和实验产品
+├─ products/       资料库、主题指南、课程和实验产品
 ├─ technologies/   框架、搜索、内容和部署技术
 └─ references/     官方资料与来源目录
 ```
@@ -20,3 +20,4 @@ research/
 
 - [学习路线与网站模式调研](learning-routes-and-site-patterns.md)
 - [嵌入式学习路线：面试知识路线](embedded-interview-roadmap.md)
+- [嵌入式学习资料目录](embedded-learning-source-catalog.md)

@@ -18,26 +18,20 @@ related: [knowledge-uart-frame-and-idle-v1, knowledge-c-buffer-model-v1]
 authors: [MagicBude]
 license: CC-BY-SA-4.0
 sources:
-  - id: iso-wg14-n1570
-    type: standard
-    title: ISO/IEC 9899:201x Committee Draft N1570
-    organization: ISO/IEC JTC1/SC22/WG14
-    url: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf
+  - sourceId: iso-wg14-n1570
     locator: Sections 3.6, 5.2.4.2.1 and 6.2.6.1
-    accessedAt: 2026-09-27
-    supports:
+    relation: supports
+    claims:
       - C 中 byte 是足以容纳执行环境基本字符集成员的可寻址存储单元
       - 对象的表示由若干字节组成
-  - id: rfc20-ascii
-    type: standard
-    title: RFC 20 — ASCII format for network interchange
-    organization: RFC Editor
-    url: https://www.rfc-editor.org/rfc/rfc20.html
+    checkedAt: 2026-09-29
+  - sourceId: rfc20-ascii
     locator: Sections 2 and 3
-    accessedAt: 2026-09-27
-    supports:
+    relation: supports
+    claims:
       - ASCII 定义字符与数值编码之间的映射
       - ASCII 字符使用 7 位表示
+    checkedAt: 2026-09-29
 ---
 
 ## 线路不会发送“文字”

@@ -18,17 +18,14 @@ related: [knowledge-uart-frame-and-idle-v1, knowledge-stm32f103-usart-v1]
 authors: [MagicBude]
 license: CC-BY-SA-4.0
 sources:
-  - id: iso-wg14-n1570
-    type: standard
-    title: ISO/IEC 9899:201x Committee Draft N1570
-    organization: ISO/IEC JTC1/SC22/WG14
-    url: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf
+  - sourceId: iso-wg14-n1570
     locator: Sections 6.5.6, 6.5.8 and 6.7.6.2
-    accessedAt: 2026-09-27
-    supports:
+    relation: supports
+    claims:
       - 数组由连续排列的元素组成
       - 指针运算只在同一数组对象及其尾后一位的边界内定义
       - 数组下标访问必须落在有效元素范围内
+    checkedAt: 2026-09-29
 ---
 
 ## 缓冲区不是“一个指针”

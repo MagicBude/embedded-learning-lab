@@ -18,17 +18,17 @@ status: accepted
 
 ## Phase 1 — First Vertical Slice
 
-目标：用一个真实主题验证内容、课程、交互和网站之间的完整链路。
+目标：用一个真实主题验证资料卡、主题指南、课程、交互和网站之间的完整链路。
 
 主题已经确定为 UART。具体页面、内容、互动、实验和验收见 `../product/first-release-scope.md`。
 
-## Phase 2 — Personal Knowledge Workflow
+## Phase 2 — Personal Research Workflow
 
-目标：验证日常记录、整理、复习和发布是否真正降低个人负担。
+目标：验证资料发现、版本与许可记录、阅读定位、交叉核对、复习和发布是否真正降低个人负担。
 
-## Phase 3 — Content Expansion
+## Phase 3 — Curated Coverage Expansion
 
-目标：在已有模式经过验证后，增加少量相关主题和学习路径。
+目标：在已有模式经过验证后，增加少量高价值资料集合、主题指南和学习路径，不追求填满百科栏目。
 
 ## Phase 4 — Labs and Tools
 
@@ -36,4 +36,4 @@ status: accepted
 
 ## Phase 5 — AI-assisted Workflow
 
-仅在内容状态、来源和检索评估稳定后，讨论 AI 导航、解释和创作辅助。
+仅在来源身份、许可、引用关系和检索评估稳定后，讨论 AI 导航、解释和整理辅助。

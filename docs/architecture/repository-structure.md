@@ -16,7 +16,8 @@ embedded-learning-lab/
 ├─ apps/
 │  └─ site/               # Astro 主站及其独立 npm 锁文件
 ├─ content/
-│  ├─ knowledge/          # 框架无关的公开 Knowledge 权威源
+│  ├─ sources/            # 资料卡：身份、版本、许可、用途与阅读定位
+│  ├─ knowledge/          # 有出处的主题指南；内部类型名暂时保留
 │  └─ courses/            # 主站课程元数据、状态与内容关系
 ├─ courses/               # 版本化独立课程包与 manifest
 ├─ skills/                # 随仓库版本化的项目专用 Codex 技能
@@ -56,6 +57,7 @@ embedded-learning-lab/
 - 生成产物与人工维护的源文件明确分离；
 - 不把大型二进制资料直接提交到仓库，除非经过明确决策；
 - 内容结构不应绑定某个特定 Web 框架；
+- 外部原始资料不默认复制进仓库；`content/sources/` 保存项目自己的资料卡和引用关系；
 - 课程生成器应通过明确产物协议接入，而不是侵入主站内部实现。
 - 正式框图的 `.drawio` 图源与 `.svg` 导出文件必须成对维护。
 - 第一版使用 npm 和单一站点包；第二个真实应用或共享包出现后再评估 workspaces；

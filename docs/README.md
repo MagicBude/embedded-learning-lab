@@ -20,8 +20,9 @@
 
 管理用户看到什么，以及不同内容类型如何协作。
 
-- `content-model.md`：学习路径、知识、课程、实验、项目、笔记和工具的职责；
+- `content-model.md`：资料库、学习路径、主题指南、课程、实验、项目、笔记和工具的职责；
 - `content-schema.md`：内容公共元数据、状态、分类、关系和来源模型；
+- `source-library.md`：资料库、来源等级、版权边界和策展流程；
 - `course-package-protocol.md`：生成课程的清单、版本化产物、接入和审核规则；
 - `learning-roadmap.md`：完整学习主干、目标分支、阶段产出和验收；
 - `first-release-scope.md`：UART 第一版页面、内容、功能、非目标和验收；
@@ -55,6 +56,7 @@
 
 - `learning-routes-and-site-patterns.md`：嵌入式学习路线、题库和个人知识站的代表性模式与采用结论。
 - `uart-course-structure.md`：UART 教程与课程结构对照、原六课诊断和十课重构结论。
+- `embedded-learning-source-catalog.md`：首批官方资料、免费课程、博客与社区资源目录。
 
 ### `assets/`
 
